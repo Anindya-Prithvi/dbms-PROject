@@ -29,7 +29,7 @@ class Customer:
         All passwords are hashed sha256, for the purpose of logging in, I shall be saving the
         username and their corresponding passwords.
         """
-        user: str = fromname.lower() + hex(hash(time.time())).upper()[-4:]
+        user: str = fromname.lower()[:-1] + hex(random.SystemRandom().randint(1,10000000)).upper()[-5:]
         password: str = secrets.token_urlsafe(8)
         passwordhash: str = hashlib.sha256(bytes(password, "utf-8")).hexdigest()
         with open("LoginDump", "a") as f:
@@ -60,13 +60,14 @@ class Customer:
         with open("StateNames") as f:
             states = f.read().split()
         PANnumbers = set()
-        for _ in range(30):
+        for _ in range(30000):
             PANnumbers.add(
                 "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
                 + f"{random.randint(1,9999)}".zfill(4)
                 + random.choice(string.ascii_uppercase)
             )
         for pan in PANnumbers:
+            print(f"Adding user for pan: {pan}")
             creditScore: int = random.randint(1, 100)
             customerName: str = Customer.get_name(names)
             values.append(
@@ -92,8 +93,8 @@ CREATE TABLE `customers` (
   `pancard` varchar(10) NOT NULL,
   `creditScore` int DEFAULT NULL,
   `phone_countryCode` int DEFAULT NULL,
-  `phone_number` int DEFAULT NULL,
-  `username` varchar(16) DEFAULT NULL,
+  `phone_number` numeric(10,0) DEFAULT NULL,
+  `username` varchar(32) DEFAULT NULL,
   `passwordHash` varchar(64) NOT NULL,
   PRIMARY KEY (`pancard`),
   UNIQUE KEY `username` (`username`)
@@ -106,10 +107,10 @@ CREATE TABLE `customers` (
 LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
-INSERT INTO `customers` VALUES {values}
+INSERT INTO `customers` VALUES {values};
 UNLOCK TABLES;
 """
         return injection
 
-
-Customer.master_make_values()
+with open("tryjection.sql","w") as f:
+    f.write(Customer.master_make_values())
