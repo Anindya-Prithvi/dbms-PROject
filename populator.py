@@ -32,8 +32,11 @@ class Customer:
         user: str = fromname.lower()[:-1] + hex(random.SystemRandom().randint(1,10000000)).upper()[-5:]
         password: str = secrets.token_urlsafe(8)
         passwordhash: str = hashlib.sha256(bytes(password, "utf-8")).hexdigest()
-        with open("LoginDump", "a") as f:
-            f.write(user + " " + password + " " + passwordhash + "\n")
+        try:
+            with open("LoginDump", "a") as f:
+                f.write(user + " " + password + "\n")
+        except:
+            print(f"Could not write: {user} {password}")
         return (user, passwordhash)
 
     def make_address(cities: list[str], countries: list[str], state: list[str]):
@@ -48,7 +51,7 @@ class Customer:
     def make_phone():
         return (random.randint(1, 500), random.randint(1234567890, 9999999999))
 
-    def master_make_values():
+    def master_make_values(n=2000):
         # we shall iterate through all pancards as they are supposed to be primary
         values = []
         with open("PRnames") as f:
@@ -60,7 +63,7 @@ class Customer:
         with open("StateNames") as f:
             states = f.read().split()
         PANnumbers = set()
-        for _ in range(30000):
+        for _ in range(n):
             PANnumbers.add(
                 "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
                 + f"{random.randint(1,9999)}".zfill(4)
@@ -72,9 +75,9 @@ class Customer:
             customerName: str = Customer.get_name(names)
             values.append(
                 (
+                    pan,
                     customerName,
                     *Customer.make_address(cities, countries, states),
-                    pan,
                     creditScore,
                     *Customer.make_phone(),
                     *Customer.make_userpass(customerName),
@@ -83,17 +86,25 @@ class Customer:
 
         values = ",".join(str(tup) for tup in values)
 
-        injection = f"""DROP TABLE IF EXISTS `customers`;
+        
+        return values
+
+    def inject(values):
+        injection = f"""--
+-- Table structure for table `customers`
+--
+
+DROP TABLE IF EXISTS `customers`;
 CREATE TABLE `customers` (
-  `name` varchar(100) NOT NULL,
+  `pancard` varchar(10) NOT NULL,
+  `customerName` varchar(100) NOT NULL,
   `address_flatno` int NOT NULL,
   `address_locality` varchar(100) NOT NULL,
   `address_state` varchar(50) NOT NULL,
   `address_country` varchar(50) NOT NULL,
-  `pancard` varchar(10) NOT NULL,
   `creditScore` int DEFAULT NULL,
   `phone_countryCode` int DEFAULT NULL,
-  `phone_number` numeric(10,0) DEFAULT NULL,
+  `phone_number` decimal(10,0) DEFAULT NULL,
   `username` varchar(32) DEFAULT NULL,
   `passwordHash` varchar(64) NOT NULL,
   PRIMARY KEY (`pancard`),
@@ -105,12 +116,59 @@ CREATE TABLE `customers` (
 --
 
 LOCK TABLES `customers` WRITE;
-/*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-/*!40000 ALTER TABLE `customers` ENABLE KEYS */;
+INSERT INTO `customers` VALUES {values};
+UNLOCK TABLES;\n
+"""
+        return injection
+
+
+class Manager:
+    """I shall only generate 1000|n managers"""
+    def gen_val(n=1000):
+        """Emp ID is anyways not accessible to everyone,
+        so EMPID will follow an autoincrement start at 1337"""
+        empIds = [1337+i for i in range(n)]
+        with open("PRnames") as f:
+            names = f.read().split()
+        random.shuffle(names)
+        names = names[:n]
+
+        values = []
+        for i in range(n):
+            values.append((empIds[i],names[i],*Customer.make_phone()))
+        
+        values = ",".join(str(tup) for tup in values)
+        return values
+
+    def inject(values):
+        injection = f"""--
+-- Table structure for table `manager`
+--
+
+DROP TABLE IF EXISTS `manager`;
+CREATE TABLE `manager` (
+  `empID` int NOT NULL AUTO_INCREMENT,
+  `managerName` varchar(100) NOT NULL,
+  `phone_countryCode` int DEFAULT NULL,
+  `phone_number` decimal(10,0) DEFAULT NULL,
+  PRIMARY KEY (`empID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `manager`
+--
+
+LOCK TABLES `manager` WRITE;
 INSERT INTO `customers` VALUES {values};
 UNLOCK TABLES;
 """
         return injection
 
-with open("tryjection.sql","w") as f:
-    f.write(Customer.master_make_values())
+
+
+customers = Customer.master_make_values()
+managers = Manager.gen_val()
+
+with open("tryjection.sql","a") as f:
+    f.write(Customer.inject(customers))
+    f.write(Manager.inject(managers))
