@@ -241,24 +241,27 @@ UNLOCK TABLES;
 
 
 class AccountType:
-    def gen_val(branchbyman, customers, n=1000):
-        sno = 15675
+    def gen_val(branchbyman, customers, n=3):
+        sno = 15674
+        delta = 0
         values = []
         sav_creates = []  # to prevent multiple savings :trollblob:
 
-        for i in range(n):
-            while True:
-                typeacc = secrets.choice(["SAV", "CUR", "LON", "CRD"])
-                customer = secrets.choice(customers)[0]
-                if typeacc == "SAV" and customer in sav_creates:
-                    continue
-                epochdt = random.randint(1284286794, 1646222220)
-                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                break
-            bmt = secrets.choice(branchbyman)
-            values.append((sno + i, timestamp, typeacc, bmt[0], bmt[1], customer))
+        for n1, i in enumerate(customers):
+            for j in range(n):
+                while True:
+                    typeacc = secrets.choice(["SAV", "CUR", "LON", "CRD"])
+                    customer = i[0]
+                    if typeacc == "SAV" and customer in sav_creates:
+                        continue
+                    epochdt = random.randint(1284286794, 1646222220)
+                    timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                    break
+                bmt = secrets.choice(branchbyman)
+                delta+=1
+                values.append((sno+delta, timestamp, typeacc, bmt[0], bmt[1], customer))
         return values
 
     def inject(values):
@@ -795,6 +798,14 @@ UNLOCK TABLES;
         return injection
 
 
+class Transaction:
+    def gen_val(cheques, debitcards, creditcards, atms, accounttypes, n=100000):
+        values = []
+        for i in cheques:
+            print("LOL")
+
+
+        return values
 
 # append argument n=something to control data pops
 customers = Customer.master_make_values()
