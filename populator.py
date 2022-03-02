@@ -676,7 +676,7 @@ class Cheque:
         values = []
         for i in range(n):
             epochdt = random.randint(1484286794, 1646222220)
-            dateOfIssue = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d")
+            dateOfIssue = datetime.datetime.fromtimestamp(epochdt).strftime("\'%Y-%m-%d\'")
             recipientaccno = secrets.choice(random.choice([savingsaccs, currentaccs]))[
                 0
             ]
@@ -734,6 +734,67 @@ UNLOCK TABLES;
 """
         return injection
 
+class ATM:
+    def gen_val(branches, n=10000):
+        values = []
+        
+        for i in range(n):
+            atmId = (
+                    int(
+                        str(
+                            int(
+                                hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(6),
+                                16,
+                            )
+                        ).zfill(18)[::-1]
+                    )
+                )
+            currentBalance = random.randint(0,2000000)
+            branch = secrets.choice(branches)
+            values.append((
+                atmId,
+                branch[1]+f" F{secrets.token_urlsafe(3)}",
+                *branch[2:],
+                currentBalance,
+                branch[0]
+            ))
+
+        return values
+
+
+    def inject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `atm`
+--
+
+DROP TABLE IF EXISTS `atm`;
+
+CREATE TABLE `atm` (
+  `atmId` decimal(18,0) NOT NULL,
+  `address_locality` varchar(100) NOT NULL,
+  `address_state` varchar(50) NOT NULL,
+  `address_country` varchar(50) NOT NULL,
+  `currentBalance` double NOT NULL,
+  `branch_code` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`atmId`),
+  KEY `branch_code` (`branch_code`),
+  CONSTRAINT `atm_ibfk_1` FOREIGN KEY (`branch_code`) REFERENCES `branch` (`IFSC_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+--
+-- Dumping data for table `atm`
+--
+
+LOCK TABLES `atm` WRITE;
+INSERT INTO `atm` VALUES {values};
+UNLOCK TABLES;
+"""
+
+        return injection
+
+
 
 # append argument n=something to control data pops
 customers = Customer.master_make_values()
@@ -749,6 +810,7 @@ debitcards = DebitCard.gen_val(acc_auto.savingsAccounts)
 creditcards = CreditCard.gen_val(acc_auto.CreditcardAccounts)
 
 cheques = Cheque.gen_val(acc_auto.savingsAccounts, acc_auto.currentAccounts)
+atms = ATM.gen_val(branches)
 
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
@@ -764,3 +826,4 @@ with open("tryjection.sql", "w") as f:
     f.write(DebitCard.inject(debitcards))
     f.write(CreditCard.inject(creditcards))
     f.write(Cheque.inject(cheques))
+    f.write(ATM.inject(atms))
