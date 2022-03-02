@@ -556,6 +556,111 @@ UNLOCK TABLES;
 """
         return injection
 
+class CreditCard:
+    def gen_val(creditcardaccs):
+        values = []
+        for i in creditcardaccs:
+            cardNo = int(str(int(hashlib.shake_128(bytes(str(i), 'utf-8')).hexdigest(6),16)).zfill(16)[::-1])
+            cvv = random.randint(100,999)
+            pin = random.randint(0,9999)
+            with open("LoginDumpCreditCards","a") as f:
+                f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
+            ccan = i[0]
+            epochdt = random.randint(1342222220,1946222220)
+            expiryDate = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+            values.append((
+                cardNo,
+                cvv,
+                expiryDate,
+                pin,
+                ccan
+            ))
+        return values
+
+        
+    def inject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `creditcard`
+--
+
+DROP TABLE IF EXISTS `creditcard`;
+
+CREATE TABLE `creditcard` (
+  `cardNo` decimal(16,0) NOT NULL,
+  `CVV` decimal(3,0) NOT NULL,
+  `expiryDate` date NOT NULL,
+  `pin` decimal(4,0) NOT NULL,
+  `creditCardAccountNo` decimal(16,0) DEFAULT NULL,
+  PRIMARY KEY (`cardNo`),
+  KEY `creditCardAccountNo` (`creditCardAccountNo`),
+  CONSTRAINT `creditcard_ibfk_1` FOREIGN KEY (`creditCardAccountNo`) REFERENCES `creditcardaccount` (`accountNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `creditcard`
+--
+
+LOCK TABLES `creditcard` WRITE;
+INSERT INTO `creditcard` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
+
+class DebitCard:
+    def gen_val(debitcardaccs):
+        values = []
+        for i in debitcardaccs:
+            cardNo = int(str(int(hashlib.shake_128(bytes(str(i), 'utf-8')).hexdigest(6),16)).zfill(16)[::-1])
+            cvv = random.randint(100,999)
+            pin = random.randint(0,9999)
+            with open("LoginDumpDebitCards","a") as f:
+                f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
+            dcan = i[0]
+            epochdt = random.randint(1342222220,1946222220)
+            expiryDate = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+            values.append((
+                cardNo,
+                cvv,
+                expiryDate,
+                pin,
+                dcan
+            ))
+        return values
+
+        
+    def inject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `debitcard`
+--
+
+DROP TABLE IF EXISTS `debitcard`;
+
+CREATE TABLE `debitcard` (
+  `cardNo` decimal(16,0) NOT NULL,
+  `CVV` decimal(3,0) NOT NULL,
+  `expiryDate` date NOT NULL,
+  `pin` decimal(4,0) NOT NULL,
+  `savingsAccountNo` decimal(16,0) DEFAULT NULL,
+  PRIMARY KEY (`cardNo`),
+  KEY `savingsAccountNo` (`savingsAccountNo`),
+  CONSTRAINT `debitcard_ibfk_1` FOREIGN KEY (`savingsAccountNo`) REFERENCES `savingsaccount` (`accountNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `debitcard`
+--
+
+LOCK TABLES `debitcard` WRITE;
+INSERT INTO `debitcard` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
 
 
 # append argument n=something to control data pops
@@ -568,6 +673,9 @@ accounttypes = AccountType.gen_val(branchbyman, customers)
 acc_auto = AccountCreator()
 acc_auto.gen_accounts(accounttypes)
 
+debitcards = DebitCard.gen_val(acc_auto.savingsAccounts)
+creditcards = CreditCard.gen_val(acc_auto.CreditcardAccounts)
+
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
     f.write(Customer.inject(customers))
@@ -579,3 +687,5 @@ with open("tryjection.sql", "w") as f:
     f.write(AccountInjectors.savingsject(acc_auto.savingsAccounts))
     f.write(AccountInjectors.currject(acc_auto.currentAccounts))
     f.write(AccountInjectors.loanject(acc_auto.loanAccounts))
+    f.write(DebitCard.inject(debitcards))
+    f.write(CreditCard.inject(creditcards))
