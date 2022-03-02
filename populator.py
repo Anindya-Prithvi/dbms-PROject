@@ -354,7 +354,7 @@ class AccountCreator:
         accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
         amountDue = random.randint(1000,10_00_00_000)
         principal = random.randint(amountDue, amountDue*10)
-        interestRate = round(random.random(),2)*10
+        interestRate = 4+round(random.random(),2)*10
         billingCycle = random.randint(1,400)
         epochdt = random.randint(1642222220,1946222220)
         dueDate = datetime.datetime.fromtimestamp(epochdt).strftime(
@@ -390,7 +390,7 @@ class AccountCreator:
         accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
         balance = random.randint(1000,10_00_00_000)
         minBalance = random.choice([1000,10000,100000,5000,0])
-        interestRate = round(random.random(),2)*10
+        interestRate = 4+round(random.random(),2)
         serialNo = accounttype[0]
         customerId = accounttype[-1]
         self.savingsAccounts.append((
@@ -408,7 +408,7 @@ class AccountCreator:
         creditLimit = random.randint(100,10000000000)
         creditSpent = random.randint(1000,100000)
         billingCycle = random.randint(1,120)
-        interestRate = round(random.random(),2)*10
+        interestRate = 4+round(random.random(),2)*10
         epochdt = random.randint(1642222220,1946222220)
         dueDate = datetime.datetime.fromtimestamp(epochdt).strftime(
                     "%Y-%m-%d %H:%M:%S"
