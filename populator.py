@@ -799,13 +799,107 @@ UNLOCK TABLES;
 
 
 class Transaction:
-    def gen_val(cheques, debitcards, creditcards, atms, accounttypes, n=100000):
+    def gen_val(cheques, debitcards, creditcards, atms, accounttypes, currentaccounts, savingsaccounts, n=100000):
         values = []
         for i in cheques:
-            print("LOL")
-
+            #txnid,toacc,totype
+            #modeofpayment,amount
+            #timeoftransaction
+            #chequeno, dcno,ccno,atmid,atmcardno
+            #fromaccserialno
+            #fromaccustomer pan
+            txnId = int(
+                        str(
+                            int(
+                                hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(7),
+                                16,
+                            )
+                        ).zfill(18)[::-1]
+                    )
+            toacc = i[2]
+            totype = "\'SAV\'" if i[4]!="null" else "\'CUR\'"
+            modeOfPayment = "\'ONL\'"
+            amount = i[3]
+            chequeno = i[0]
+            dcno = ccno = atmid = atmcardno = "null"
+            fromcustserno = 0
+            fromcustpan = 'pan'
+            if totype=="'SAV'":
+                for savacc in savingsaccounts:
+                    if savacc[0]==i[4]:
+                        fromcustpan = savacc[-1]
+                        fromcustserno = savacc[-2]
+            else:
+                for curacc in currentaccounts:
+                    if curacc[0]==i[5]:
+                        fromcustpan = curacc[-1]
+                        fromcustserno = curacc[-2]
+            values.append((
+                txnId,
+                toacc,
+                totype,
+                modeOfPayment,
+                amount,
+                i[1][:-1]+" 00:00:00'",
+                chequeno,
+                dcno,
+                ccno,
+                atmid,
+                atmcardno,
+                fromcustserno,
+                "'"+fromcustpan+"'"
+            ))
 
         return values
+
+    def inject(values):
+        values = ",".join("(" + ",".join([str(i) for i in tup]) + ")" for tup in values)
+        injection = f"""--
+-- Table structure for table `transaction`
+--
+
+DROP TABLE IF EXISTS `transaction`;
+
+CREATE TABLE `transaction` (
+  `txnId` decimal(18,0) NOT NULL,
+  `toAccount` decimal(18,0) DEFAULT NULL,
+  `toType` varchar(3) DEFAULT NULL,
+  `modeOfPayment` varchar(3) DEFAULT NULL,
+  `amount` double DEFAULT NULL,
+  `timeOfTransaction` timestamp NULL DEFAULT NULL,
+  `chequeNo` decimal(12,0) DEFAULT NULL,
+  `debitCardNo` decimal(16,0) DEFAULT NULL,
+  `creditCardNo` decimal(16,0) DEFAULT NULL,
+  `ATMid` decimal(18,0) DEFAULT NULL,
+  `ATMCardNo` decimal(16,0) DEFAULT NULL,
+  `fromAccserialNo` int DEFAULT NULL,
+  `fromAcccustomerId` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`txnId`),
+  KEY `chequeNo` (`chequeNo`),
+  KEY `debitCardNo` (`debitCardNo`),
+  KEY `creditCardNo` (`creditCardNo`),
+  KEY `ATMid` (`ATMid`),
+  KEY `ATMCardNo` (`ATMCardNo`),
+  KEY `fromAccserialNo` (`fromAccserialNo`),
+  KEY `fromAcccustomerId` (`fromAcccustomerId`),
+  CONSTRAINT `transaction_ibfk_1` FOREIGN KEY (`chequeNo`) REFERENCES `cheque` (`chequeNo`),
+  CONSTRAINT `transaction_ibfk_2` FOREIGN KEY (`debitCardNo`) REFERENCES `debitcard` (`cardNo`),
+  CONSTRAINT `transaction_ibfk_3` FOREIGN KEY (`creditCardNo`) REFERENCES `creditcard` (`cardNo`),
+  CONSTRAINT `transaction_ibfk_4` FOREIGN KEY (`ATMid`) REFERENCES `atm` (`atmId`),
+  CONSTRAINT `transaction_ibfk_5` FOREIGN KEY (`ATMCardNo`) REFERENCES `debitcard` (`cardNo`),
+  CONSTRAINT `transaction_ibfk_6` FOREIGN KEY (`fromAccserialNo`) REFERENCES `accounttype` (`serialNo`),
+  CONSTRAINT `transaction_ibfk_7` FOREIGN KEY (`fromAcccustomerId`) REFERENCES `accounttype` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `transaction`
+--
+
+LOCK TABLES `transaction` WRITE;
+INSERT INTO `transaction` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
 
 # append argument n=something to control data pops
 customers = Customer.master_make_values()
@@ -822,6 +916,7 @@ creditcards = CreditCard.gen_val(acc_auto.CreditcardAccounts)
 
 cheques = Cheque.gen_val(acc_auto.savingsAccounts, acc_auto.currentAccounts)
 atms = ATM.gen_val(branches)
+txns = Transaction.gen_val(cheques, debitcards, creditcards, atms, accounttypes, acc_auto.currentAccounts, acc_auto.savingsAccounts)
 
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
@@ -838,3 +933,4 @@ with open("tryjection.sql", "w") as f:
     f.write(CreditCard.inject(creditcards))
     f.write(Cheque.inject(cheques))
     f.write(ATM.inject(atms))
+    f.write(Transaction.inject(txns))
