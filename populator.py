@@ -260,8 +260,10 @@ class AccountType:
                     )
                     break
                 bmt = secrets.choice(branchbyman)
-                delta+=1
-                values.append((sno+delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+                delta += 1
+                values.append(
+                    (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
+                )
         return values
 
     def inject(values):
@@ -679,7 +681,9 @@ class Cheque:
         values = []
         for i in range(n):
             epochdt = random.randint(1484286794, 1646222220)
-            dateOfIssue = datetime.datetime.fromtimestamp(epochdt).strftime("\'%Y-%m-%d\'")
+            dateOfIssue = datetime.datetime.fromtimestamp(epochdt).strftime(
+                "'%Y-%m-%d'"
+            )
             recipientaccno = secrets.choice(random.choice([savingsaccs, currentaccs]))[
                 0
             ]
@@ -737,33 +741,33 @@ UNLOCK TABLES;
 """
         return injection
 
+
 class ATM:
     def gen_val(branches, n=10000):
         values = []
-        
+
         for i in range(n):
-            atmId = (
+            atmId = int(
+                str(
                     int(
-                        str(
-                            int(
-                                hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(6),
-                                16,
-                            )
-                        ).zfill(18)[::-1]
+                        hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(6),
+                        16,
                     )
-                )
-            currentBalance = random.randint(0,2000000)
+                ).zfill(18)[::-1]
+            )
+            currentBalance = random.randint(0, 2000000)
             branch = secrets.choice(branches)
-            values.append((
-                atmId,
-                branch[1]+f" F{secrets.token_urlsafe(3)}",
-                *branch[2:],
-                currentBalance,
-                branch[0]
-            ))
+            values.append(
+                (
+                    atmId,
+                    branch[1] + f" F{secrets.token_urlsafe(3)}",
+                    *branch[2:],
+                    currentBalance,
+                    branch[0],
+                )
+            )
 
         return values
-
 
     def inject(values):
         values = ",".join(str(tup) for tup in values)
@@ -799,55 +803,143 @@ UNLOCK TABLES;
 
 
 class Transaction:
-    def gen_val(cheques, debitcards, creditcards, atms, accounttypes, currentaccounts, savingsaccounts, n=100000):
+    def gen_val(
+        cheques,
+        debitcards,
+        creditcards,
+        atms,
+        accounttypes,
+        currentaccounts,
+        savingsaccounts,
+        loansaccounts,
+        ccaccount,
+        n=100000,
+    ):
         values = []
         for i in cheques:
-            #txnid,toacc,totype
-            #modeofpayment,amount
-            #timeoftransaction
-            #chequeno, dcno,ccno,atmid,atmcardno
-            #fromaccserialno
-            #fromaccustomer pan
+            # txnid,toacc,totype
+            # modeofpayment,amount
+            # timeoftransaction
+            # chequeno, dcno,ccno,atmid,atmcardno
+            # fromaccserialno
+            # fromaccustomer pan
             txnId = int(
-                        str(
-                            int(
-                                hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(7),
-                                16,
-                            )
-                        ).zfill(18)[::-1]
+                str(
+                    int(
+                        hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(7),
+                        16,
                     )
+                ).zfill(18)[::-1]
+            )
             toacc = i[2]
-            totype = "\'SAV\'" if i[4]!="null" else "\'CUR\'"
-            modeOfPayment = "\'ONL\'"
+            totype = "'SAV'" if i[4] != "null" else "'CUR'"
+            modeOfPayment = "'ONL'"
             amount = i[3]
             chequeno = i[0]
             dcno = ccno = atmid = atmcardno = "null"
             fromcustserno = 0
-            fromcustpan = 'pan'
-            if totype=="'SAV'":
+            fromcustpan = "pan"
+            if totype == "'SAV'":
                 for savacc in savingsaccounts:
-                    if savacc[0]==i[4]:
+                    if savacc[0] == i[4]:
                         fromcustpan = savacc[-1]
                         fromcustserno = savacc[-2]
             else:
                 for curacc in currentaccounts:
-                    if curacc[0]==i[5]:
+                    if curacc[0] == i[5]:
                         fromcustpan = curacc[-1]
                         fromcustserno = curacc[-2]
+            values.append(
+                (
+                    txnId,
+                    toacc,
+                    totype,
+                    modeOfPayment,
+                    amount,
+                    i[1][:-1] + " 00:00:00'",
+                    chequeno,
+                    dcno,
+                    ccno,
+                    atmid,
+                    atmcardno,
+                    fromcustserno,
+                    "'" + fromcustpan + "'",
+                )
+            )
+        
+        #now we shall generate arbitrary transactions from savings accs
+        for i in range(n):
+            # txnid,toacc,totype
+            # modeofpayment,amount
+            # timeoftransaction
+            # chequeno, dcno,ccno,atmid,atmcardno
+            # fromaccserialno
+            # fromaccustomer pan
+            txnId = int(
+                str(
+                    int(
+                        hashlib.shake_128(bytes(str(i)+"ad", "utf-8")).hexdigest(7),
+                        16,
+                    )
+                ).zfill(18)[::-1]
+            )
+            toacctype = secrets.choice([0,1,2,3]) 
+            encodes = ["'CUR'","'SAV'","'LON'", "'CRE'"]
+            totype = encodes[toacctype]
+            if totype == "'SAV'":
+                toacc = secrets.choice(savingsaccounts)
+            elif totype == "'CUR'":
+                toacc = secrets.choice(currentaccounts)
+            elif totype == "'LON'":
+                toacc = secrets.choice(loansaccounts)
+            elif totype == "'CRE'":
+                toacc = secrets.choice(ccaccount)
+            modeOfPayment = "'ONL'"
+            amount = random.randint(100,900000)*10
+            timestamp = datetime.datetime.fromtimestamp(random.randint(1284286794, 1646222220)).strftime(
+                        "'%Y-%m-%d %H:%M:%S'"
+                    )
+            chequeno=dcno=ccno=atmid=atmcardno="null"
+                
+            fromacctype = secrets.choice([0,1,2])
+            fromenc = ["'SAV'","'CUR'","'CRE'"]
+            fromtype = fromenc[fromacctype]
+
+            if fromtype == "'SAV'":
+                fromacc = secrets.choice(savingsaccounts)
+            elif fromtype == "'CUR'":
+                fromacc = secrets.choice(currentaccounts)
+            elif fromtype == "'CRE'":
+                fromacc = secrets.choice(ccaccount)
+
+            if random.random()>0.6:
+                if fromtype=="'SAV'":
+                    for debitcard in debitcards:
+                        if debitcard[-1]==fromacc[0]:
+                            dcno = debitcard[0]
+                    if random.random()>0.4:
+                        atmid = random.choice(atms)[0]
+                        atmcardno = dcno
+                elif fromtype=="'CRE'":
+                    for creditcard in creditcards:
+                        if creditcard[-1]==fromacc[0]:
+                            ccno = creditcard[0]
+                
+
             values.append((
                 txnId,
-                toacc,
+                toacc[0],
                 totype,
                 modeOfPayment,
                 amount,
-                i[1][:-1]+" 00:00:00'",
+                timestamp,
                 chequeno,
                 dcno,
                 ccno,
                 atmid,
                 atmcardno,
-                fromcustserno,
-                "'"+fromcustpan+"'"
+                fromacc[-2],
+                "'"+fromacc[-1]+"'",
             ))
 
         return values
@@ -901,6 +993,7 @@ UNLOCK TABLES;
 """
         return injection
 
+
 # append argument n=something to control data pops
 customers = Customer.master_make_values()
 managers = Manager.gen_val()
@@ -916,7 +1009,17 @@ creditcards = CreditCard.gen_val(acc_auto.CreditcardAccounts)
 
 cheques = Cheque.gen_val(acc_auto.savingsAccounts, acc_auto.currentAccounts)
 atms = ATM.gen_val(branches)
-txns = Transaction.gen_val(cheques, debitcards, creditcards, atms, accounttypes, acc_auto.currentAccounts, acc_auto.savingsAccounts)
+txns = Transaction.gen_val(
+    cheques,
+    debitcards,
+    creditcards,
+    atms,
+    accounttypes,
+    acc_auto.currentAccounts,
+    acc_auto.savingsAccounts,
+    acc_auto.loanAccounts,
+    acc_auto.CreditcardAccounts,
+)
 
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
