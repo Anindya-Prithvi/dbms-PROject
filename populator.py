@@ -2,6 +2,12 @@
 
 import random, time, secrets, hashlib, string
 
+DATABASE_PROJECT_NAME = "BDSM"
+initstring = f"""DROP DATABASE IF EXISTS {DATABASE_PROJECT_NAME};
+CREATE DATABASE {DATABASE_PROJECT_NAME};
+USE {DATABASE_PROJECT_NAME};
+
+"""
 
 def main():
     pass
@@ -33,7 +39,7 @@ class Customer:
         password: str = secrets.token_urlsafe(8)
         passwordhash: str = hashlib.sha256(bytes(password, "utf-8")).hexdigest()
         try:
-            with open("LoginDump", "a") as f:
+            with open("LoginDumpUser", "a") as f:
                 f.write(user + " " + password + "\n")
         except:
             print(f"Could not write: {user} {password}")
@@ -135,7 +141,13 @@ class Manager:
 
         values = []
         for i in range(n):
-            values.append((empIds[i],names[i],*Customer.make_phone()))
+            password=secrets.token_urlsafe(8)
+            try:
+                with open("LoginDumpManager", "a") as f:
+                    f.write(f"{empIds[i]} {password}")
+            except:
+                print(f"Manager level user/empid: {empIds[i]}, password {password}")
+            values.append((empIds[i],names[i],*Customer.make_phone(),hashlib.sha256(bytes(password, "utf-8")).hexdigest()))
         
         values = ",".join(str(tup) for tup in values)
         return values
@@ -151,6 +163,7 @@ CREATE TABLE `manager` (
   `managerName` varchar(100) NOT NULL,
   `phone_countryCode` int DEFAULT NULL,
   `phone_number` decimal(10,0) DEFAULT NULL,
+  `password_hash` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`empID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -159,7 +172,7 @@ CREATE TABLE `manager` (
 --
 
 LOCK TABLES `manager` WRITE;
-INSERT INTO `customers` VALUES {values};
+INSERT INTO `manager` VALUES {values};
 UNLOCK TABLES;
 """
         return injection
@@ -169,6 +182,7 @@ UNLOCK TABLES;
 customers = Customer.master_make_values()
 managers = Manager.gen_val()
 
-with open("tryjection.sql","a") as f:
+with open("tryjection.sql","w") as f:
+    f.write(initstring)
     f.write(Customer.inject(customers))
     f.write(Manager.inject(managers))
