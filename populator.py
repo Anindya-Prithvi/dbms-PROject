@@ -239,18 +239,23 @@ UNLOCK TABLES;
 
 
 class AccountType:
-    def gen_val(branchbyman, n=1000):
+    def gen_val(branchbyman, customers, n=1000):
         sno = 15675
         values = []
+        sav_creates = [] # to prevent multiple savings :trollblob:
 
         for i in range(n):
-            epochdt = random.randint(1284286794, 1646222220)
-            timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            typeacc = secrets.choice(["SAV", "CUR", "LON", "CRD"])
-            values.append((sno + i, timestamp, typeacc, random.choice(managers)))
-
+            while True:
+                typeacc = secrets.choice(["SAV", "CUR", "LON", "CRD"])
+                customer = secrets.choice(customers)[0]
+                if(typeacc=="SAV" and customer in sav_creates): continue
+                epochdt = random.randint(1284286794, 1646222220)
+                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+                break
+            bmt = secrets.choice(branchbyman)
+            values.append((sno + i, timestamp, typeacc, bmt[0], bmt[1], customer))
         return values
 
     def inject(values):
@@ -323,7 +328,7 @@ UNLOCK TABLES;"""
 customers = Customer.master_make_values()
 managers = Manager.gen_val()
 branches = Branch.gen_val()
-branchbyman = ManagedBy.gen_val()
+branchbyman = ManagedBy.gen_val(managers, branches)
 accounttypes = AccountType.gen_val(branchbyman, customers)
 
 with open("tryjection.sql", "w") as f:
