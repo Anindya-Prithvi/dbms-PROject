@@ -283,14 +283,53 @@ UNLOCK TABLES;
         return injection
 
 
+class ManagedBy:
+    def gen_val(managers, branches):
+        values = []
+        for i in branches:
+            epochdt = random.randint(1284286794, 1546222220)
+            timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                "%Y-%m-%d"
+            )
+            values.append((secrets.choice(managers)[0], i[0],timestamp))
+        return values
+
+    def inject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `managedby`
+--
+
+DROP TABLE IF EXISTS `managedby`;
+CREATE TABLE `managedby` (
+  `manager_id` int NOT NULL,
+  `branch_id` varchar(10) NOT NULL,
+  `dateofjoining` date NOT NULL,
+  PRIMARY KEY (`manager_id`,`branch_id`),
+  KEY `branch_id` (`branch_id`),
+  CONSTRAINT `managedby_ibfk_1` FOREIGN KEY (`manager_id`) REFERENCES `manager` (`empID`),
+  CONSTRAINT `managedby_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`IFSC_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `managedby`
+--
+
+LOCK TABLES `managedby` WRITE;
+INSERT INTO `managedby` VALUES {values};
+UNLOCK TABLES;"""
+        return injection
+
 customers = Customer.master_make_values()
 managers = Manager.gen_val()
 branches = Branch.gen_val()
-accounttypes = AccountType.gen_val(branchbyman)
+branchbyman = ManagedBy.gen_val()
+accounttypes = AccountType.gen_val(branchbyman, customers)
 
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
     f.write(Customer.inject(customers))
     f.write(Manager.inject(managers))
     f.write(Branch.inject(branches))
+    f.write(ManagedBy.inject(branchbyman))
     f.write(AccountType.inject(accounttypes))
