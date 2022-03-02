@@ -10,6 +10,7 @@ USE {DATABASE_PROJECT_NAME};
 
 """
 
+
 class Customer:
     def gen_accNo():
         """We shall use current timestamp since epoch
@@ -243,13 +244,14 @@ class AccountType:
     def gen_val(branchbyman, customers, n=1000):
         sno = 15675
         values = []
-        sav_creates = [] # to prevent multiple savings :trollblob:
+        sav_creates = []  # to prevent multiple savings :trollblob:
 
         for i in range(n):
             while True:
                 typeacc = secrets.choice(["SAV", "CUR", "LON", "CRD"])
                 customer = secrets.choice(customers)[0]
-                if(typeacc=="SAV" and customer in sav_creates): continue
+                if typeacc == "SAV" and customer in sav_creates:
+                    continue
                 epochdt = random.randint(1284286794, 1646222220)
                 timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
                     "%Y-%m-%d %H:%M:%S"
@@ -294,10 +296,8 @@ class ManagedBy:
         values = []
         for i in branches:
             epochdt = random.randint(1284286794, 1546222220)
-            timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
-                "%Y-%m-%d"
-            )
-            values.append((secrets.choice(managers)[0], i[0],timestamp))
+            timestamp = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d")
+            values.append((secrets.choice(managers)[0], i[0], timestamp))
         return values
 
     def inject(values):
@@ -326,9 +326,11 @@ INSERT INTO `managedby` VALUES {values};
 UNLOCK TABLES;"""
         return injection
 
+
 ## Account creation logic
 ## For each account type, (sno + customer + type)
 ## create respective account
+
 
 class AccountCreator:
     # instantiate this
@@ -336,98 +338,97 @@ class AccountCreator:
     savingsAccounts = []
     currentAccounts = []
     CreditcardAccounts = []
+
     def gen_accounts(self, accounttypes):
         for i in accounttypes:
             # useful customer i[-1], acc type i[2]
-            if i[2]=="SAV":
+            if i[2] == "SAV":
                 self.create_savings(i)
-            elif i[2]=="LON":
+            elif i[2] == "LON":
                 self.create_loan(i)
-            elif i[2]=="CUR":
+            elif i[2] == "CUR":
                 self.create_current(i)
-            elif i[2]=="CRD":
+            elif i[2] == "CRD":
                 self.create_credit(i)
             else:
                 print("ERROR OCCURED, but anyways")
-    
+
     def create_loan(self, accounttype):
-        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
-        amountDue = random.randint(1000,10_00_00_000)
-        principal = random.randint(amountDue, amountDue*10)
-        interestRate = 4+round(random.random(),2)*10
-        billingCycle = random.randint(1,400)
-        epochdt = random.randint(1642222220,1946222220)
-        dueDate = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
+        accountno = int(
+            hashlib.shake_128(bytes(str(accounttype), "utf-8")).hexdigest(6), 16
+        )
+        amountDue = random.randint(1000, 10_00_00_000)
+        principal = random.randint(amountDue, amountDue * 10)
+        interestRate = 4 + round(random.random(), 2) * 10
+        billingCycle = random.randint(1, 400)
+        epochdt = random.randint(1642222220, 1946222220)
+        dueDate = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
         customerId = accounttype[-1]
         serialNo = accounttype[0]
-        self.loanAccounts.append((
-            accountno,
-            amountDue,
-            principal,
-            interestRate,
-            billingCycle,
-            dueDate,
-            serialNo,
-            customerId
-        ))
+        self.loanAccounts.append(
+            (
+                accountno,
+                amountDue,
+                principal,
+                interestRate,
+                billingCycle,
+                dueDate,
+                serialNo,
+                customerId,
+            )
+        )
 
     def create_current(self, accounttype):
-        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
-        balance = round(random.random()*random.randint(100000,10000000000),2)
+        accountno = int(
+            hashlib.shake_128(bytes(str(accounttype), "utf-8")).hexdigest(6), 16
+        )
+        balance = round(random.random() * random.randint(100000, 10000000000), 2)
         serialno = accounttype[0]
         customerId = accounttype[-1]
 
-        self.currentAccounts.append((
-            accountno,
-            balance,
-            serialno,
-            customerId
-        ))
-    
+        self.currentAccounts.append((accountno, balance, serialno, customerId))
+
     def create_savings(self, accounttype):
-        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
-        balance = random.randint(1000,10_00_00_000)
-        minBalance = random.choice([1000,10000,100000,5000,0])
-        interestRate = 4+round(random.random(),2)
+        accountno = int(
+            hashlib.shake_128(bytes(str(accounttype), "utf-8")).hexdigest(6), 16
+        )
+        balance = random.randint(1000, 10_00_00_000)
+        minBalance = random.choice([1000, 10000, 100000, 5000, 0])
+        interestRate = 4 + round(random.random(), 2)
         serialNo = accounttype[0]
         customerId = accounttype[-1]
-        self.savingsAccounts.append((
-            accountno,
-            balance,
-            minBalance,
-            interestRate,
-            serialNo,
-            customerId
-        ))
+        self.savingsAccounts.append(
+            (accountno, balance, minBalance, interestRate, serialNo, customerId)
+        )
 
     def create_credit(self, accounttype):
-        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
-        amountDue = random.randint(1000,10_00_00_000)
-        creditLimit = random.randint(100,10000000000)
-        creditSpent = random.randint(1000,100000)
-        billingCycle = random.randint(1,120)
-        interestRate = 4+round(random.random(),2)*10
-        epochdt = random.randint(1642222220,1946222220)
-        dueDate = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
+        accountno = int(
+            hashlib.shake_128(bytes(str(accounttype), "utf-8")).hexdigest(6), 16
+        )
+        amountDue = random.randint(1000, 10_00_00_000)
+        creditLimit = random.randint(100, 10000000000)
+        creditSpent = random.randint(1000, 100000)
+        billingCycle = random.randint(1, 120)
+        interestRate = 4 + round(random.random(), 2) * 10
+        epochdt = random.randint(1642222220, 1946222220)
+        dueDate = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
         customerId = accounttype[-1]
         serialNo = accounttype[0]
-        self.CreditcardAccounts.append((
-            accountno,
-            amountDue,
-            creditLimit,
-            creditSpent,
-            billingCycle,
-            dueDate,
-            interestRate,
-            serialNo,
-            customerId
-        ))
+        self.CreditcardAccounts.append(
+            (
+                accountno,
+                amountDue,
+                creditLimit,
+                creditSpent,
+                billingCycle,
+                dueDate,
+                interestRate,
+                serialNo,
+                customerId,
+            )
+        )
 
-    
+
 class AccountInjectors:
     def savingsject(values):
         values = ",".join(str(tup) for tup in values)
@@ -462,6 +463,7 @@ INSERT INTO `savingsaccount` VALUES {values};
 UNLOCK TABLES;
 """
         return injection
+
     def currject(values):
         values = ",".join(str(tup) for tup in values)
         injection = f"""--
@@ -490,6 +492,7 @@ INSERT INTO `currentaccount` VALUES {values};
 UNLOCK TABLES;
 """
         return injection
+
     def loanject(values):
         values = ",".join(str(tup) for tup in values)
         injection = f"""--
@@ -522,6 +525,7 @@ INSERT INTO `loanaccount` VALUES {values};
 UNLOCK TABLES;
 """
         return injection
+
     def creditject(values):
         values = ",".join(str(tup) for tup in values)
         injection = f"""--
@@ -556,30 +560,31 @@ UNLOCK TABLES;
 """
         return injection
 
+
 class CreditCard:
     def gen_val(creditcardaccs):
         values = []
         for i in creditcardaccs:
-            cardNo = int(str(int(hashlib.shake_128(bytes(str(i), 'utf-8')).hexdigest(6),16)).zfill(16)[::-1])
-            cvv = random.randint(100,999)
-            pin = random.randint(0,9999)
-            with open("LoginDumpCreditCards","a") as f:
-                f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
+            cardNo = int(
+                str(
+                    int(hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(6), 16)
+                ).zfill(16)[::-1]
+            )
+            cvv = random.randint(100, 999)
+            pin = random.randint(0, 9999)
+            try:
+                with open("LoginDumpCreditCards", "a") as f:
+                    f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
+            except:
+                print(f"{cardNo} {cvv} {str(pin).zfill(4)}")
             ccan = i[0]
-            epochdt = random.randint(1342222220,1946222220)
+            epochdt = random.randint(1342222220, 1946222220)
             expiryDate = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-            values.append((
-                cardNo,
-                cvv,
-                expiryDate,
-                pin,
-                ccan
-            ))
+                "%Y-%m-%d %H:%M:%S"
+            )
+            values.append((cardNo, cvv, expiryDate, pin, ccan))
         return values
 
-        
     def inject(values):
         values = ",".join(str(tup) for tup in values)
         injection = f"""--
@@ -609,30 +614,31 @@ UNLOCK TABLES;
 """
         return injection
 
+
 class DebitCard:
     def gen_val(debitcardaccs):
         values = []
         for i in debitcardaccs:
-            cardNo = int(str(int(hashlib.shake_128(bytes(str(i), 'utf-8')).hexdigest(6),16)).zfill(16)[::-1])
-            cvv = random.randint(100,999)
-            pin = random.randint(0,9999)
-            with open("LoginDumpDebitCards","a") as f:
-                f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
+            cardNo = int(
+                str(
+                    int(hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(6), 16)
+                ).zfill(16)[::-1]
+            )
+            cvv = random.randint(100, 999)
+            pin = random.randint(0, 9999)
+            try:
+                with open("LoginDumpDebitCards", "a") as f:
+                    f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
+            except:
+                print(f"{cardNo} {cvv} {str(pin).zfill(4)}")
             dcan = i[0]
-            epochdt = random.randint(1342222220,1946222220)
+            epochdt = random.randint(1342222220, 1946222220)
             expiryDate = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-            values.append((
-                cardNo,
-                cvv,
-                expiryDate,
-                pin,
-                dcan
-            ))
+                "%Y-%m-%d %H:%M:%S"
+            )
+            values.append((cardNo, cvv, expiryDate, pin, dcan))
         return values
 
-        
     def inject(values):
         values = ",".join(str(tup) for tup in values)
         injection = f"""--
@@ -663,6 +669,72 @@ UNLOCK TABLES;
         return injection
 
 
+class Cheque:
+    """We shall issue 2000 cheques"""
+
+    def gen_val(savingsaccs, currentaccs, n=2000):
+        values = []
+        for i in range(n):
+            epochdt = random.randint(1484286794, 1646222220)
+            dateOfIssue = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d")
+            recipientaccno = secrets.choice(random.choice([savingsaccs, currentaccs]))[
+                0
+            ]
+            amount = random.randint(1, 50000) * 1000
+            ownersav = "null"
+            ownercurr = "null"
+            if random.random() > 0.5:
+                ownercurr = secrets.choice(currentaccs)[0]
+            else:
+                ownersav = secrets.choice(savingsaccs)[0]
+
+            values.append(
+                (
+                    int(
+                        str(
+                            int(
+                                hashlib.shake_128(bytes(str(i), "utf-8")).hexdigest(4),
+                                16,
+                            )
+                        ).zfill(12)[::-1]
+                    ),
+                    dateOfIssue,
+                    recipientaccno,
+                    amount,
+                    ownersav,
+                    ownercurr,
+                )
+            )
+        return values
+
+    def inject(values):
+        values = ",".join("(" + ",".join([str(i) for i in tup]) + ")" for tup in values)
+        injection = f"""DROP TABLE IF EXISTS `cheque`;
+CREATE TABLE `cheque` (
+  `chequeNo` decimal(12,0) NOT NULL,
+  `dateOfIssue` date NOT NULL,
+  `accountNo` decimal(18,0) NOT NULL,
+  `amount` double NOT NULL,
+  `ownerSavingAccount` decimal(18,0) DEFAULT NULL,
+  `ownerCurrentAccount` decimal(18,0) DEFAULT NULL,
+  PRIMARY KEY (`chequeNo`),
+  KEY `ownerSavingAccount` (`ownerSavingAccount`),
+  KEY `ownerCurrentAccount` (`ownerCurrentAccount`),
+  CONSTRAINT `cheque_ibfk_1` FOREIGN KEY (`ownerSavingAccount`) REFERENCES `savingsaccount` (`accountNo`),
+  CONSTRAINT `cheque_ibfk_2` FOREIGN KEY (`ownerCurrentAccount`) REFERENCES `currentaccount` (`accountNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `cheque`
+--
+
+LOCK TABLES `cheque` WRITE;
+INSERT INTO `cheque` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
+
+
 # append argument n=something to control data pops
 customers = Customer.master_make_values()
 managers = Manager.gen_val()
@@ -675,6 +747,8 @@ acc_auto.gen_accounts(accounttypes)
 
 debitcards = DebitCard.gen_val(acc_auto.savingsAccounts)
 creditcards = CreditCard.gen_val(acc_auto.CreditcardAccounts)
+
+cheques = Cheque.gen_val(acc_auto.savingsAccounts, acc_auto.currentAccounts)
 
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
@@ -689,3 +763,4 @@ with open("tryjection.sql", "w") as f:
     f.write(AccountInjectors.loanject(acc_auto.loanAccounts))
     f.write(DebitCard.inject(debitcards))
     f.write(CreditCard.inject(creditcards))
+    f.write(Cheque.inject(cheques))
