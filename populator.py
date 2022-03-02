@@ -3,7 +3,8 @@
 import random, time, secrets, hashlib, string, datetime
 
 DATABASE_PROJECT_NAME = "BDSM"
-initstring = f"""DROP DATABASE IF EXISTS {DATABASE_PROJECT_NAME};
+initstring = f"""UNLOCK TABLES;
+DROP DATABASE IF EXISTS {DATABASE_PROJECT_NAME};
 CREATE DATABASE {DATABASE_PROJECT_NAME};
 USE {DATABASE_PROJECT_NAME};
 
@@ -325,11 +326,247 @@ INSERT INTO `managedby` VALUES {values};
 UNLOCK TABLES;"""
         return injection
 
+## Account creation logic
+## For each account type, (sno + customer + type)
+## create respective account
+
+class AccountCreator:
+    # instantiate this
+    loanAccounts = []
+    savingsAccounts = []
+    currentAccounts = []
+    CreditcardAccounts = []
+    def gen_accounts(self, accounttypes):
+        for i in accounttypes:
+            # useful customer i[-1], acc type i[2]
+            if i[2]=="SAV":
+                self.create_savings(i)
+            elif i[2]=="LON":
+                self.create_loan(i)
+            elif i[2]=="CUR":
+                self.create_current(i)
+            elif i[2]=="CRD":
+                self.create_credit(i)
+            else:
+                print("ERROR OCCURED, but anyways")
+    
+    def create_loan(self, accounttype):
+        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
+        amountDue = random.randint(1000,10_00_00_000)
+        principal = random.randint(amountDue, amountDue*10)
+        interestRate = round(random.random(),2)*10
+        billingCycle = random.randint(1,400)
+        epochdt = random.randint(1642222220,1946222220)
+        dueDate = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+        customerId = accounttype[-1]
+        serialNo = accounttype[0]
+        self.loanAccounts.append((
+            accountno,
+            amountDue,
+            principal,
+            interestRate,
+            billingCycle,
+            dueDate,
+            serialNo,
+            customerId
+        ))
+
+    def create_current(self, accounttype):
+        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
+        balance = round(random.random()*random.randint(100000,10000000000),2)
+        serialno = accounttype[0]
+        customerId = accounttype[-1]
+
+        self.currentAccounts.append((
+            accountno,
+            balance,
+            serialno,
+            customerId
+        ))
+    
+    def create_savings(self, accounttype):
+        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
+        balance = random.randint(1000,10_00_00_000)
+        minBalance = random.choice([1000,10000,100000,5000,0])
+        interestRate = round(random.random(),2)*10
+        serialNo = accounttype[0]
+        customerId = accounttype[-1]
+        self.savingsAccounts.append((
+            accountno,
+            balance,
+            minBalance,
+            interestRate,
+            serialNo,
+            customerId
+        ))
+
+    def create_credit(self, accounttype):
+        accountno = int(hashlib.shake_128(bytes(str(accounttype), 'utf-8')).hexdigest(6),16)
+        amountDue = random.randint(1000,10_00_00_000)
+        creditLimit = random.randint(100,10000000000)
+        creditSpent = random.randint(1000,100000)
+        billingCycle = random.randint(1,120)
+        interestRate = round(random.random(),2)*10
+        epochdt = random.randint(1642222220,1946222220)
+        dueDate = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+        customerId = accounttype[-1]
+        serialNo = accounttype[0]
+        self.CreditcardAccounts.append((
+            accountno,
+            amountDue,
+            creditLimit,
+            creditSpent,
+            billingCycle,
+            dueDate,
+            interestRate,
+            serialNo,
+            customerId
+        ))
+
+    
+class AccountInjectors:
+    def savingsject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `savingsaccount`
+--
+
+DROP TABLE IF EXISTS `savingsaccount`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `savingsaccount` (
+  `accountNo` decimal(18,0) NOT NULL,
+  `balance` double NOT NULL,
+  `minBalance` double NOT NULL,
+  `interestRate` decimal(4,2) NOT NULL,
+  `serialNo` int DEFAULT NULL,
+  `customerId` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`accountNo`),
+  KEY `serialNo` (`serialNo`),
+  KEY `customerId` (`customerId`),
+  CONSTRAINT `savingsaccount_ibfk_1` FOREIGN KEY (`serialNo`) REFERENCES `accounttype` (`serialNo`),
+  CONSTRAINT `savingsaccount_ibfk_2` FOREIGN KEY (`customerId`) REFERENCES `accounttype` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `savingsaccount`
+--
+
+LOCK TABLES `savingsaccount` WRITE;
+INSERT INTO `savingsaccount` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
+    def currject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `currentaccount`
+--
+
+DROP TABLE IF EXISTS `currentaccount`;
+CREATE TABLE `currentaccount` (
+  `accountNo` decimal(18,0) NOT NULL,
+  `balance` double NOT NULL,
+  `serialNo` int DEFAULT NULL,
+  `customerId` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`accountNo`),
+  KEY `serialNo` (`serialNo`),
+  KEY `customerId` (`customerId`),
+  CONSTRAINT `currentaccount_ibfk_1` FOREIGN KEY (`serialNo`) REFERENCES `accounttype` (`serialNo`),
+  CONSTRAINT `currentaccount_ibfk_2` FOREIGN KEY (`customerId`) REFERENCES `accounttype` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `currentaccount`
+--
+
+LOCK TABLES `currentaccount` WRITE;
+INSERT INTO `currentaccount` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
+    def loanject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `loanaccount`
+--
+
+DROP TABLE IF EXISTS `loanaccount`;
+CREATE TABLE `loanaccount` (
+  `accountNo` decimal(18,0) NOT NULL,
+  `amountDue` double NOT NULL,
+  `principal` double NOT NULL,
+  `interestRate` decimal(4,2) NOT NULL,
+  `billingCycle` int NOT NULL,
+  `dueDate` date NOT NULL,
+  `serialNo` int DEFAULT NULL,
+  `customerId` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`accountNo`),
+  KEY `serialNo` (`serialNo`),
+  KEY `customerId` (`customerId`),
+  CONSTRAINT `loanaccount_ibfk_1` FOREIGN KEY (`serialNo`) REFERENCES `accounttype` (`serialNo`),
+  CONSTRAINT `loanaccount_ibfk_2` FOREIGN KEY (`customerId`) REFERENCES `accounttype` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `loanaccount`
+--
+
+LOCK TABLES `loanaccount` WRITE;
+INSERT INTO `loanaccount` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
+    def creditject(values):
+        values = ",".join(str(tup) for tup in values)
+        injection = f"""--
+-- Table structure for table `creditcardaccount`
+--
+
+DROP TABLE IF EXISTS `creditcardaccount`;
+CREATE TABLE `creditcardaccount` (
+  `accountNo` decimal(18,0) NOT NULL,
+  `amountDue` double NOT NULL,
+  `creditLimit` double NOT NULL,
+  `creditSpent` double NOT NULL,
+  `billingCycle` int NOT NULL,
+  `dueDate` date NOT NULL,
+  `interestRate` decimal(4,2) NOT NULL,
+  `serialNo` int DEFAULT NULL,
+  `customerId` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`accountNo`),
+  KEY `serialNo` (`serialNo`),
+  KEY `customerId` (`customerId`),
+  CONSTRAINT `creditcardaccount_ibfk_1` FOREIGN KEY (`serialNo`) REFERENCES `accounttype` (`serialNo`),
+  CONSTRAINT `creditcardaccount_ibfk_2` FOREIGN KEY (`customerId`) REFERENCES `accounttype` (`customer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `creditcardaccount`
+--
+
+LOCK TABLES `creditcardaccount` WRITE;
+INSERT INTO `creditcardaccount` VALUES {values};
+UNLOCK TABLES;
+"""
+        return injection
+
+
+
+# append argument n=something to control data pops
 customers = Customer.master_make_values()
 managers = Manager.gen_val()
 branches = Branch.gen_val()
 branchbyman = ManagedBy.gen_val(managers, branches)
 accounttypes = AccountType.gen_val(branchbyman, customers)
+
+acc_auto = AccountCreator()
+acc_auto.gen_accounts(accounttypes)
 
 with open("tryjection.sql", "w") as f:
     f.write(initstring)
@@ -338,3 +575,7 @@ with open("tryjection.sql", "w") as f:
     f.write(Branch.inject(branches))
     f.write(ManagedBy.inject(branchbyman))
     f.write(AccountType.inject(accounttypes))
+    f.write(AccountInjectors.creditject(acc_auto.CreditcardAccounts))
+    f.write(AccountInjectors.savingsject(acc_auto.savingsAccounts))
+    f.write(AccountInjectors.currject(acc_auto.currentAccounts))
+    f.write(AccountInjectors.loanject(acc_auto.loanAccounts))
