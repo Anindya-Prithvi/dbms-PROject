@@ -24,7 +24,7 @@ class Customer:
         """Fetched Puerto Rican name repo with 22k unique names
         Note, the more the names, the more the accounts we can make
         """
-        # with open("PRnames","r") as f:
+        # with open("data/PRnames","r") as f:
         #     names:list[str] = f.read().split()
         return random.choice(names)
 
@@ -40,7 +40,7 @@ class Customer:
         password: str = secrets.token_urlsafe(8)
         passwordhash: str = hashlib.sha256(bytes(password, "utf-8")).hexdigest()
         try:
-            with open("LoginDumpUser", "a") as f:
+            with open("data/LoginDumpUser", "a") as f:
                 f.write(user + " " + password + "\n")
         except:
             print(f"Could not write: {user} {password}")
@@ -61,13 +61,13 @@ class Customer:
     def master_make_values(n=2000):
         # we shall iterate through all pancards as they are supposed to be primary
         values = []
-        with open("PRnames") as f:
+        with open("data/PRnames") as f:
             names = f.read().split()
-        with open("CityNames") as f:
+        with open("data/CityNames") as f:
             cities = f.read().split()
-        with open("CountryNames") as f:
+        with open("data/CountryNames") as f:
             countries = f.read().split()
-        with open("StateNames") as f:
+        with open("data/StateNames") as f:
             states = f.read().split()
         PANnumbers = set()
         for _ in range(n):
@@ -134,7 +134,7 @@ class Manager:
         """Emp ID is anyways not accessible to everyone,
         so EMPID will follow an autoincrement start at 1337"""
         empIds = [1337 + i for i in range(n)]
-        with open("PRnames") as f:
+        with open("data/PRnames") as f:
             names = f.read().split()
         random.shuffle(names)
         names = names[:n]
@@ -143,7 +143,7 @@ class Manager:
         for i in range(n):
             password = secrets.token_urlsafe(8)
             try:
-                with open("LoginDumpManager", "a") as f:
+                with open("data/LoginDumpManager", "a") as f:
                     f.write(f"{empIds[i]} {password}")
             except:
                 print(f"Manager level user/empid: {empIds[i]}, password {password}")
@@ -200,11 +200,11 @@ class Branch:
         return values
 
     def make_address():
-        with open("CityNames", "r") as f:
+        with open("data/CityNames", "r") as f:
             cities = f.read().split()
-        with open("CountryNames", "r") as f:
+        with open("data/CountryNames", "r") as f:
             countries = f.read().split()
-        with open("StateNames", "r") as f:
+        with open("data/StateNames", "r") as f:
             state = f.read().split()
         """Ship cities as locality for now, we just have to populate"""
         return (
@@ -578,7 +578,7 @@ class CreditCard:
             cvv = random.randint(100, 999)
             pin = random.randint(0, 9999)
             try:
-                with open("LoginDumpCreditCards", "a") as f:
+                with open("data/LoginDumpCreditCards", "a") as f:
                     f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
             except:
                 print(f"{cardNo} {cvv} {str(pin).zfill(4)}")
@@ -632,7 +632,7 @@ class DebitCard:
             cvv = random.randint(100, 999)
             pin = random.randint(0, 9999)
             try:
-                with open("LoginDumpDebitCards", "a") as f:
+                with open("data/LoginDumpDebitCards", "a") as f:
                     f.write(f"{cardNo} {cvv} {str(pin).zfill(4)}")
             except:
                 print(f"{cardNo} {cvv} {str(pin).zfill(4)}")
@@ -1021,7 +1021,7 @@ txns = Transaction.gen_val(
     acc_auto.CreditcardAccounts,
 )
 
-with open("tryjection.sql", "w") as f:
+with open("data/tryjection.sql", "w") as f:
     f.write(initstring)
     f.write(Customer.inject(customers))
     f.write(Manager.inject(managers))
