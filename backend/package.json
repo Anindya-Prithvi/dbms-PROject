@@ -1,0 +1,19 @@
+{
+  "name": "bankingdsm-backend",
+  "version": "1.0.0",
+  "description": "This is the backend of course project (DBMS), it shall fetch all our resources",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bank",
+    "database",
+    "dbms"
+  ],
+  "author": "Anindya Prithvi, et.al.",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
