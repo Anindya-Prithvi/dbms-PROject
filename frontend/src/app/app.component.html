@@ -1,0 +1,12 @@
+<div class="mat-display-2" style="text-align: center; padding: 10px;">
+    Banking Database and Systems management
+</div>
+
+<div class="auth" *ngIf="!isLoggedIn">
+    <app-auth></app-auth>
+    <button mat-raised-button (click)="adminLogin()">Admin login</button>
+</div>
+
+<div class="user" *ngIf="isLoggedIn">
+    Add logout component and the real interative BDSM
+</div>

@@ -1,0 +1,15 @@
+.auth{
+    margin: auto;
+    width: fit-content;
+    padding: 1rem;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.user{
+    margin: auto;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid black;
+    text-align: center;
+}
