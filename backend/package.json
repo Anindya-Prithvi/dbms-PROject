@@ -15,6 +15,7 @@
   "author": "Anindya Prithvi, et.al.",
   "license": "GPL-3.0",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "mysql": "^2.18.1"

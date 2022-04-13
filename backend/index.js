@@ -1,10 +1,13 @@
 var mysql = require('mysql');
 var dotenv = require('dotenv');
+var cors = require('cors');
 
 var express = require('express');
 const app = express();
 const port = 3000;
 const DATABASE_NAME = "BDSM";
+
+app.use(cors()); //#TODO:remove in production
 
 var con_user_1 = mysql.createConnection({
     host: "localhost",
