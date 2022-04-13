@@ -64,11 +64,11 @@ class Customer:
         with open("data/PRnames") as f:
             names = f.read().split()
         with open("data/CityNames") as f:
-            cities = f.read().split()
+            cities = f.read().split('\n')
         with open("data/CountryNames") as f:
-            countries = f.read().split()
+            countries = f.read().split('\n')
         with open("data/StateNames") as f:
-            states = f.read().split()
+            states = f.read().split('\n')
         PANnumbers = set()
         for _ in range(n):
             PANnumbers.add(
@@ -201,11 +201,11 @@ class Branch:
 
     def make_address():
         with open("data/CityNames", "r") as f:
-            cities = f.read().split()
+            cities = f.read().split('\n')
         with open("data/CountryNames", "r") as f:
-            countries = f.read().split()
+            countries = f.read().split('\n')
         with open("data/StateNames", "r") as f:
-            state = f.read().split()
+            state = f.read().split('\n')
         """Ship cities as locality for now, we just have to populate"""
         return (
             random.choice(cities),
