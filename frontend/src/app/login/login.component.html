@@ -1,11 +1,11 @@
 <form [formGroup]="logincreds" (ngSubmit)="onSubmit()" style="display:flex; flex-direction: column;">
     <mat-form-field appearance="fill">
         <mat-label>Username</mat-label>
-        <input matInput>
+        <input matInput formControlName="username">
     </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Password</mat-label>
-        <input matInput type="password">
+        <input matInput type="password" formControlName="password">
     </mat-form-field>
-    <button (submit)="onSubmit()" mat-raised-button color="primary">Login</button>
+    <button (submit)="onSubmit()" [disabled]="logincreds.invalid" mat-raised-button color="primary">Login</button>
 </form>

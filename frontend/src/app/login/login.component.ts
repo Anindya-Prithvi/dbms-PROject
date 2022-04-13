@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { axios } from '../../utilities/axios';
 
 @Component({
@@ -8,7 +8,10 @@ import { axios } from '../../utilities/axios';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  logincreds = new FormGroup({})
+  logincreds = new FormGroup({
+    username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')]),
+    password: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')])
+  })
 
   constructor() { }
 
@@ -16,7 +19,8 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log("I win");
+    console.log(this.logincreds.value);
+    //use login endpoint
     axios.get('/register').then(response => {
       console.log(response);
     })
