@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     console.log(this.logincreds.value);
     //use login endpoint
     axios.post('/login', this.logincreds.value).then(response => {
-      console.log(response);
+      console.log(response.data);
     })
   }
 

@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var dotenv = require('dotenv');
 var cors = require('cors');
 const { createHash } = require('crypto');
+var jwt = require('jsonwebtoken');
 
 var express = require('express');
 const app = express();
@@ -11,6 +12,8 @@ const DATABASE_NAME = "BDSM";
 app.use(cors()); //#TODO:remove in production
 app.use(express.json());
 app.use(express.urlencoded());
+
+const secret = dotenv.config().parsed.secret;
 
 var con_user_1 = mysql.createConnection({
     host: "localhost",
@@ -65,7 +68,12 @@ app.post('/login', (req, res) => {
                 else {
                     let givenPassHashed = createHash('sha256').update(req.body.password).digest('hex');
                     if (givenPassHashed == foundHash) {
-                        res.send("YAYYYY");
+                        let token = jwt.sign({
+                            user: 'name',
+                            pass: 'word',
+                            time: 'runningout'
+                        }, secret)
+                        res.send(token);
                     }
                     else {
                         res.send('');
