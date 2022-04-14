@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 import { axios } from '../../utilities/axios';
-import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-login',
