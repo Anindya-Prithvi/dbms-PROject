@@ -4,8 +4,9 @@
   "description": "This is the backend of course project (DBMS), it shall fetch all our resources",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "serve": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo -n nothing"
   },
   "keywords": [
     "bank",

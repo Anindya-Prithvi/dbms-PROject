@@ -45,7 +45,7 @@ con_user_2.query(`USE ${DATABASE_NAME}`);
 app.get('/', (req, res) => {
     console.log(req.body); //works with POST
     console.log(req.query); //works with GET 
-    res.send("Do not ping root lol");
+    res.send("Please do not ping root lol");
 })
 
 app.post('/login', (req, res) => {

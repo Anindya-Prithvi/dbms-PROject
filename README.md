@@ -24,7 +24,7 @@ any fancy bloat applications. The database is in mysql.
   secret=put-any-string-here
   ```
   Remember to replace `user1, user2, pass1, pass2` appropriately.  
-  Once it is done, fire up a shell and run `npm start`. This should get the backend live.
+  For developing the backend use `npm i -g nodemon` and once it is done, fire up a shell and run `npm serve`. This should get the backend live and have some form of crash protection. If you don't want it, just use `npm start`.
 - Run the frontend (dev mode)  
   Create another `.env` file in `frontend/src`. Add the following:
   ```
