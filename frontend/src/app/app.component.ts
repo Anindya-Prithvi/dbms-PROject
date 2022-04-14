@@ -13,21 +13,15 @@ export class AppComponent {
 
   // See something for cookie disabled people
   constructor(private cookieService: CookieService) {
-    this.authCookie = this.cookieService.get('AuthenticationToken');
+    this.authCookie = this.cookieService.get('accesscookie');
     this.isLoggedIn = this.validateAuthCookie(this.authCookie);
   }
 
   validateAuthCookie(authCookie: String): boolean {
-    return authCookie == 'admin';
+    return authCookie != '';
   }
   // loadData() {
   //   this.showSpinner = true;
   //   setTimeout(() => this.showSpinner = false, 5000);
   // }
-
-  adminLogin(): void {
-    this.isLoggedIn = true;
-    this.authCookie = "something";
-    this.cookieService.set('AuthenticationToken', 'admin');
-  }
 }

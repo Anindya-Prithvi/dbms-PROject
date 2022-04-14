@@ -9,9 +9,9 @@ const app = express();
 const port = 3000;
 const DATABASE_NAME = "BDSM";
 
-app.use(cors()); //#TODO:remove in production
+app.use(cors({ origin: 'http://localhost:4200', credentials: true })); //#TODO:remove in production
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 const secret = dotenv.config().parsed.secret;
 

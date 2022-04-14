@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
 import { axios } from '../../utilities/axios';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-login',
@@ -8,12 +10,15 @@ import { axios } from '../../utilities/axios';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  csx: CookieService;
   logincreds = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')]),
     password: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')])
   })
 
-  constructor() { }
+  constructor(csx: CookieService) {
+    this.csx = csx;
+  }
 
   ngOnInit(): void {
   }
@@ -23,6 +28,9 @@ export class LoginComponent implements OnInit {
     //use login endpoint
     axios.post('/login', this.logincreds.value).then(response => {
       console.log(response.data);
+      localStorage.setItem('accesscookie', response.data);
+      this.csx.set('accesscookie', response.data);
+      window.location.reload();
     })
   }
 
