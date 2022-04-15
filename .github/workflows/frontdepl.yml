@@ -30,7 +30,7 @@ jobs:
       - run: npm install -g @angular/cli > /dev/null
       - run: npm install
         working-directory: ./frontend
-      - run: ng build --prod --output-path=../dist
+      - run: ng build --prod --output-path=../dist --base-href /dbms-PROject/
         working-directory: ./frontend
       - name: Publish generated content to GitHub Pages
         uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
