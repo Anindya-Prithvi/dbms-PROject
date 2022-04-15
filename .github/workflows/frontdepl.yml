@@ -27,10 +27,11 @@ jobs:
       - uses: actions/setup-node@v3 #this will install Node and npm on Ubuntu
         with:
           node-version: '14.x'
+      - working-directory: ./frontend
       - run: npm install -g @angular/cli > /dev/null
-      - run: cd frontend
       - run: npm install
       - run: ng build --prod --output-path=../dist
+      - working-directory: ../
       - name: Publish generated content to GitHub Pages
         uses: tsunematsu21/actions-publish-gh-pages@v1.0.1
         with:
