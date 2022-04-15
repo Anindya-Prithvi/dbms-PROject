@@ -9,7 +9,7 @@ const app = express();
 const port = 3000;
 const DATABASE_NAME = "BDSM";
 
-app.use(cors({ origin: 'http://localhost:4200', credentials: true })); //#TODO:remove in production
+app.use(cors({ origin: ['http://localhost:4200','https://anindya-prithvi.github.io'], credentials: true })); //#TODO:remove in production
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
