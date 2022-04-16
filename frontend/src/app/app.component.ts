@@ -11,6 +11,10 @@ export class AppComponent {
   isLoggedIn: boolean = false;
   authCookie: String = '';
   hasSavings: boolean = true;
+  hasLoan: boolean = true;
+  hasCredit: boolean = true;
+  hasCurrent: boolean = true;
+
   displaySavings: boolean = false;
 
   // See something for cookie disabled people
@@ -29,6 +33,11 @@ export class AppComponent {
     this.displaySavings = true;
 
   }
+
+  goHome() {
+    this.displaySavings = false;
+  }
+
   // loadData() {
   //   this.showSpinner = true;
   //   setTimeout(() => this.showSpinner = false, 5000);

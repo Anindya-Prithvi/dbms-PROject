@@ -11,11 +11,32 @@
     Add logout component and the real interative BDSM lol
     </p>
 
+    <button mat-raised-button (click)="goHome()" color="primary">
+        Home
+    </button>
+    <br/>
+
     <button mat-raised-button *ngIf="hasSavings && !displaySavings" (click)="loadSavings()" color="primary">
+        <!-- <savings-acc></savings-acc> -->
         Savings Account
     </button>
-    <div class="SavingAccountLandingPage" *ngIf="hasSavings && displaySavings">
-        <p>Account #:</p>
-    </div>
+    
+    <button mat-raised-button *ngIf="hasLoan && !displaySavings" (click)="loadSavings()" color="primary">
+        Loan Account
+    </button>
+
+    <button mat-raised-button *ngIf="hasCredit && !displaySavings" (click)="loadSavings()" color="primary">
+        Credit Account
+    </button>
+
+    <button mat-raised-button *ngIf="hasCurrent && !displaySavings" (click)="loadSavings()" color="primary">
+        Current Account
+    </button>
+
+    <app-saving-landing *ngIf="hasSavings && displaySavings"></app-saving-landing>
+
+    <!-- <div class="SavingAccountLandingPage" *ngIf="hasSavings && displaySavings"> -->
+        
+    <!-- </div> -->
 
 </div>

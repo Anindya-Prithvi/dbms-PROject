@@ -11,13 +11,15 @@ import { SignupComponent } from './signup/signup.component';
 
 import { CookieService } from 'ngx-cookie-service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SavingLandingComponent } from './saving-landing/saving-landing.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    SavingLandingComponent
   ],
   imports: [
     BrowserModule,
