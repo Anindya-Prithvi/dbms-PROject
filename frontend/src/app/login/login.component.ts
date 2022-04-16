@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
   csx: CookieService;
   logincreds = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')]),
-    password: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')])
+    password: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_-]*')])
   })
 
   constructor(csx: CookieService) {

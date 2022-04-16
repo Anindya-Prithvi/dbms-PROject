@@ -9,7 +9,9 @@ import { CookieService } from 'ngx-cookie-service';
 export class AppComponent {
   title = 'material-girl';
   isLoggedIn: boolean = false;
-  authCookie: String = ''
+  authCookie: String = '';
+  hasSavings: boolean = true;
+  displaySavings: boolean = false;
 
   // See something for cookie disabled people
   constructor(private cookieService: CookieService) {
@@ -19,6 +21,13 @@ export class AppComponent {
 
   validateAuthCookie(authCookie: String): boolean {
     return authCookie != '';
+  }
+
+  loadSavings() {
+    console.log("Savings uhdwudheuhload kar");
+    console.log("PAGALPAN")
+    this.displaySavings = true;
+
   }
   // loadData() {
   //   this.showSpinner = true;

@@ -7,5 +7,15 @@
 </div>
 
 <div class="user" *ngIf="isLoggedIn">
-    Add logout component and the real interative BDSM
+    <p>
+    Add logout component and the real interative BDSM lol
+    </p>
+
+    <button mat-raised-button *ngIf="hasSavings && !displaySavings" (click)="loadSavings()" color="primary">
+        Savings Account
+    </button>
+    <div class="SavingAccountLandingPage" *ngIf="hasSavings && displaySavings">
+        <p>Account #:</p>
+    </div>
+
 </div>
