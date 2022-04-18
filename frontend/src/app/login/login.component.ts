@@ -27,9 +27,11 @@ export class LoginComponent implements OnInit {
     //use login endpoint
     axios.post('/login', this.logincreds.value).then(response => {
       console.log(response.data);
+      console.log(response);
+
       // localStorage.setItem('accesscookie', response.data);
-      // this.csx.set('accesscookie', response.data);
-      // window.location.reload();
+      if (response.data === "correct") { sessionStorage.setItem('login', 'true') };
+      window.location.reload();
     })
   }
 

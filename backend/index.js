@@ -73,11 +73,13 @@ app.post('/login', (req, res) => {
                         let token = jwt.sign({
                             user: req.body.username,
                         }, secret)
-                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true });
-                        res.send('lol');
+
+                        // make permanant to store??
+                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true, maxAge: 300000 });
+                        res.send('correct');
                     }
                     else {
-                        res.send('');
+                        res.send('wrong');
                     }
                 }
             });
@@ -131,7 +133,7 @@ app.get('/savingsBalance', (req, res) => {
                 if (err) throw err;
                 if (result['length'] == 0) { }
                 else {
-                    balance  = (result[0]['balance']);
+                    balance = (result[0]['balance']);
                     console.log("INNER: " + balance);
                 }
 
@@ -155,7 +157,7 @@ app.get('/savingsBalance', (req, res) => {
                 //     }
                 // }
             });
-        
+
         // console.log("TEST: " + test);
     } catch (error) {
         console.log("someone sent a faulty req");
