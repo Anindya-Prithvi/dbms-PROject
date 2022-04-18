@@ -71,11 +71,9 @@ app.post('/login', (req, res) => {
                     let givenPassHashed = createHash('sha256').update(req.body.password).digest('hex');
                     if (givenPassHashed == foundHash) {
                         let token = jwt.sign({
-                            user: 'name',
-                            pass: 'word',
-                            time: 'runningout'
+                            user: req.body.username,
                         }, secret)
-                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true, httpOnly: false });
+                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true });
                         res.send('lol');
                     }
                     else {
@@ -108,13 +106,14 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/savingsBalance', (req, res) => {
-    let jwtcookie = req.cookies['accesscookie'];
+    let jwtcookie = req.cookies;
+    console.log(jwtcookie);
     console.log(jwt.decode(jwtcookie));
 
-    con_user_1.query(`SELECT 1`, (err, result) => {
-        if (err) throw err;
-        console.log(result);
-    });
+    // con_user_1.query(`SELECT 1`, (err, result) => {
+    //     if (err) throw err;
+    //     console.log(result);
+    // });
     res.send('Working');
 });
 
