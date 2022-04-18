@@ -16,6 +16,7 @@
   "author": "Anindya Prithvi, et.al.",
   "license": "GPL-3.0",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.0",

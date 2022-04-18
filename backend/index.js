@@ -3,6 +3,7 @@ var dotenv = require('dotenv');
 var cors = require('cors');
 const { createHash } = require('crypto');
 var jwt = require('jsonwebtoken');
+var cookieParser = require('cookie-parser');
 
 var express = require('express');
 const app = express();
@@ -12,6 +13,7 @@ const DATABASE_NAME = "BDSM";
 app.use(cors({ origin: ['http://localhost:4200','https://anindya-prithvi.github.io'], credentials: true })); //#TODO:remove in production
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const secret = dotenv.config().parsed.secret;
 
@@ -102,6 +104,18 @@ app.post('/register', (req, res) => {
         console.log("posting");
         res.send("Registered!!");
     });
+});
+
+app.get('/savingsBalance', (req, res) => {
+    let jwtcookie = req.cookies;
+    console.log(jwtcookie);
+    console.log(jwt.decode(jwtcookie));
+
+    con_user_1.query(`SELECT 1`, (err, result) => {
+        if (err) throw err;
+        console.log(result);
+    });
+    res.send('Working');
 });
 
 app.listen(process.env.PORT || port);
