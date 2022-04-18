@@ -75,7 +75,7 @@ app.post('/login', (req, res) => {
                             pass: 'word',
                             time: 'runningout'
                         }, secret)
-                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true });
+                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true, httpOnly: false });
                         res.send('lol');
                     }
                     else {
@@ -108,8 +108,7 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/savingsBalance', (req, res) => {
-    let jwtcookie = req.cookies;
-    console.log(jwtcookie);
+    let jwtcookie = req.cookies['accesscookie'];
     console.log(jwt.decode(jwtcookie));
 
     con_user_1.query(`SELECT 1`, (err, result) => {
