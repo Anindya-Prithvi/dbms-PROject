@@ -106,15 +106,62 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/savingsBalance', (req, res) => {
-    let jwtcookie = req.cookies;
+    let jwtcookie = req.cookies['accesscookie'];
     console.log(jwtcookie);
     console.log(jwt.decode(jwtcookie));
-
+    let username = jwt.decode(jwtcookie)["user"];
+    console.log(username);
+    var customerId;
     // con_user_1.query(`SELECT 1`, (err, result) => {
     //     if (err) throw err;
     //     console.log(result);
     // });
-    res.send('Working');
+
+    try {
+        con_user_1.query(`
+        SELECT accountType.customer_id, savingsAccount.balance as balance
+        FROM accountType, savingsAccount 
+        WHERE EXISTS(
+            SELECT *
+            FROM customers
+            WHERE customers.username = '${username}' AND savingsAccount.customerId = customers.pancard
+        );`,
+            (err, result) => {
+                let balance = 0;
+                if (err) throw err;
+                if (result['length'] == 0) { }
+                else {
+                    balance  = (result[0]['balance']);
+                    console.log("INNER: " + balance);
+                }
+
+                res.send(balance.toString());
+
+                // return customerId
+                //send tokens here
+                // console.log(foundHash);
+                // if (customerId == '') res.send('');
+                // else {
+                //     let givenPassHashed = createHash('sha256').update(req.body.password).digest('hex');
+                //     if (givenPassHashed == foundHash) {
+                //         let token = jwt.sign({
+                //             user: req.body.username,
+                //         }, secret)
+                //         res.cookie('accesscookie', token, { sameSite: 'none', secure: true });
+                //         res.send('lol');
+                //     }
+                //     else {
+                //         res.send('');
+                //     }
+                // }
+            });
+        
+        // console.log("TEST: " + test);
+    } catch (error) {
+        console.log("someone sent a faulty req");
+        res.status(404);
+    }
+    console.log("ASDASD" + customerId);
 });
 
 app.listen(process.env.PORT || port);

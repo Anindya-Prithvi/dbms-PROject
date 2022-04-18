@@ -7,21 +7,22 @@ import {axios} from '../../utilities/axios';
   styleUrls: ['./saving-landing.component.css']
 })
 export class SavingLandingComponent implements OnInit {
-  balance: Number = 100; 
+  balance: String = "";
   constructor() { 
-    this.balance = this.getBalance();
+    this.getBalance();
   }
 
 
   ngOnInit(): void {
   }
 
-  getBalance(): Number {
-    axios.get("/savingsBalance").then(response => {
+  getBalance() {
+    return axios.get("/savingsBalance").then(response => {
+      console.log("OYE BALANCE: " + response.data);
       console.log(response.data);
-      return response.data;
-    })
-    return 0;
+      this.balance = response.data;
+    });
+
   }
 
   sendMoney() {
