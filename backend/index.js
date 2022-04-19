@@ -19,6 +19,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/static', express.static('dist'))
 
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
