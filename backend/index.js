@@ -1,4 +1,5 @@
 var mysql = require("mysql");
+var dotenv = require("dotenv");
 var cors = require("cors");
 const { createHash } = require("crypto");
 var jwt = require("jsonwebtoken");
@@ -19,13 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const secret = process.env.secret;
+const secret = dotenv.config().parsed.secret || process.env.secret;
 
 var con_user_1 = mysql.createConnection({
   host: "localhost",
   port: 3306,
-  user: process.env.DB_USER_1,
-  password: process.env.DB_PASSWORD_1,
+  user: dotenv.config().parsed.DB_USER_1 || process.env.DB_USER_1,
+  password: dotenv.config().parsed.DB_PASSWORD_1 || process.env.DB_PASSWORD_1,
 });
 
 con_user_1.connect(function (err) {
@@ -36,8 +37,8 @@ con_user_1.connect(function (err) {
 var con_user_2 = mysql.createConnection({
   host: "localhost",
   port: 3306,
-  user: process.env.DB_USER_2,
-  password: process.env.DB_PASSWORD_2,
+  user: dotenv.config().parsed.DB_USER_2 || process.env.DB_USER_2,
+  password: dotenv.config().parsed.DB_PASSWORD_2 || process.env.DB_PASSWORD_2,
 });
 
 con_user_2.connect(function (err) {
@@ -83,13 +84,16 @@ app.post("/login", (req, res) => {
               },
               secret
             );
+
+            // make permanant to store??
             res.cookie("accesscookie", token, {
               sameSite: "none",
               secure: true,
+              maxAge: 300000,
             });
-            res.send("lol");
+            res.send("correct");
           } else {
-            res.send("");
+            res.send("wrong");
           }
         }
       }
