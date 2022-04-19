@@ -2,7 +2,7 @@ import axios_base from 'axios';
 
 //#TODO:Disallow in productions
 export const axios = axios_base.create({
-    baseURL: 'http://127.0.0.1:3000', //just remove this, requests shall go to /whatever
+    baseURL: (!(typeof process === "undefined") && process.env['ROOT_URL']) || 'http://127.0.0.1:3000', //just remove this, requests shall go to /whatever
     withCredentials: true,
 })
 
