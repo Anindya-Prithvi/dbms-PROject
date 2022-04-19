@@ -24,7 +24,7 @@ app.use('/static', express.static('dist'))
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
   console.log(req.url);
-  if (req.cookies.accesscookie == null && req.url === "/login") {
+  if (req.cookies.accesscookie == null && (req.url === "/login" || req.url.match('/static/.+'))) {
     console.log("Issuing cookie cookie");
     next();
   }
