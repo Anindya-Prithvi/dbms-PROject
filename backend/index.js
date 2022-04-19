@@ -14,6 +14,7 @@ app.use(cors({ origin: ['http://localhost:4200', 'https://anindya-prithvi.github
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/static', express.static('dist'));
 
 const secret = dotenv.config().parsed.secret;
 
