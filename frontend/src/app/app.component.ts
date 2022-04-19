@@ -34,6 +34,10 @@ export class AppComponent {
   goHome() {
     this.displaySavings = false;
   }
+  logout() {
+    sessionStorage.setItem('login', 'false');
+    this.isLoggedIn = false;
+  }
 
   // loadData() {
   //   this.showSpinner = true;

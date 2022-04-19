@@ -8,12 +8,14 @@
 
 <div class="user" *ngIf="isLoggedIn">
     <p>
-    Add logout component and the real interative BDSM lol
+    Welcome to BDSM Buddies
     </p>
 
     <button mat-raised-button (click)="goHome()" color="primary">
         Home
     </button>
+
+
 
     <br/>
     <br>
@@ -33,6 +35,9 @@
 
     <button mat-raised-button *ngIf="hasCurrent && !displaySavings" (click)="loadSavings()" color="primary">
         Current Account
+    </button>
+    <button mat-raised-button (click)="logout()" color="primary">
+        Logout
     </button>
 
     <app-saving-landing *ngIf="hasSavings && displaySavings"></app-saving-landing>
