@@ -173,19 +173,47 @@ app.get("/savingsTransaction", (req, res) => {
   try {
     // From savings account transactions
     con_user_1.query(
-      `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId from transaction, savingsaccount, customers
+      `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+        creditcardNo, ATMId, ATMCardNo 
+        from transaction, savingsaccount, customers
         WHERE savingsaccount.customerId = customers.pancard 
         AND transaction.fromAcccustomerId = customers.pancard
         AND customers.username = '${username}'
         ; `,
       (err, result) => {
         console.log(result);
+        const transactions = [];
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
-          console.log(result[0]["transID"]);
+          console.log(result["length"]);
+          for (let i = 0; i < result["length"]; i++) {
+            const transactionDetails = [];
+            transactionDetails.push(result[i]["transID"].toString());
+            transactionDetails.push(result[i]["amount"].toString());
+            transactionDetails.push(result[i]["timeOfTransaction"].toString());
+            transactionDetails.push(result[i]["toAccount"].toString());
+            transactionDetails.push(result[i]["fromAcccustomerId"].toString());
+            if (!(String(result[i]["chequeNo"]) === "null")) {
+              transactionDetails.push("CHEQUE");
+              transactionDetails.push(result[i]["chequeNo"].toString());
+            } else if (!(String(result[i]["creditcardNo"]) === "null")) {
+              transactionDetails.push("CREDITCARD");
+              transactionDetails.push(result[i]["creditcardNo"].toString());
+            } else if (!(String(result[i]["ATMId"]) === "null")) {
+              transactionDetails.push("ATM");
+              transactionDetails.push(result[i]["ATMCardNo"].toString());
+            } else if (!(String(result[i]["debitCardNo"]) === "null")) {
+              transactionDetails.push("DEBIT");
+              transactionDetails.push(result[i]["debitCardNo"].toString());
+            } else {
+              transactionDetails.push("ACCOUNTTOACCOUNT");
+              transactionDetails.push("");
+            }
+            transactions.push(transactionDetails);
+          }
         }
-        res.send("hello");
+        res.send(transactions);
       }
     );
   } catch (error) {
@@ -198,7 +226,11 @@ app.post("/sendMoney", (req, res) => {
   console.log(jwtcookie);
   console.log(jwt.decode(jwtcookie));
   let username = jwt.decode(jwtcookie)["user"];
-  // I have to workkkkkkk
+  try {
+    // Insert values for transactions
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(process.env.PORT || port);
