@@ -73,11 +73,13 @@ app.post('/login', (req, res) => {
                         let token = jwt.sign({
                             user: req.body.username,
                         }, secret)
-                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true });
-                        res.send('lol');
+
+                        // make permanant to store??
+                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true, maxAge: 300000 });
+                        res.send('correct');
                     }
                     else {
-                        res.send('');
+                        res.send('wrong');
                     }
                 }
             });
