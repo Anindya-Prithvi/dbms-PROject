@@ -2,3 +2,5 @@
 <p>Balance: {{balance}}</p>
 <button mat-raised-button (click)="showTransactions()">Passbook</button>
 <button mat-raised-button (click)="sendMoney()">Send Money</button>
+<p>Passbook:</p>
+<app-saving-passbook *ngIf="showPassbook"></app-saving-passbook>

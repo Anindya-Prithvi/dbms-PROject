@@ -8,6 +8,8 @@ import {axios} from '../../utilities/axios';
 })
 export class SavingLandingComponent implements OnInit {
   balance: String = "";
+  showPassbook = false;
+
   constructor() { 
     this.getBalance();
   }
@@ -31,6 +33,7 @@ export class SavingLandingComponent implements OnInit {
 
   showTransactions() {
     console.log("Passbook Dhika!");
+    this.showPassbook = true;
   }
 
 }
