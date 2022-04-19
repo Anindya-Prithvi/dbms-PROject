@@ -1,4 +1,5 @@
 var mysql = require("mysql");
+var dotenv = require("dotenv");
 var cors = require("cors");
 const { createHash } = require("crypto");
 var jwt = require("jsonwebtoken");
@@ -19,13 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const secret = process.env.secret;
+const secret = dotenv.config().parsed.secret || process.env.secret;
 
 var con_user_1 = mysql.createConnection({
     host: "localhost",
     port: 3306,
-    user: process.env.DB_USER_1,
-    password: process.env.DB_PASSWORD_1,
+    user: dotenv.config().parsed.DB_USER_1 || process.env.DB_USER_1,
+    password: dotenv.config().parsed.DB_PASSWORD_1 || process.env.DB_PASSWORD_1,
 });
 
 con_user_1.connect(function (err) {
@@ -36,8 +37,8 @@ con_user_1.connect(function (err) {
 var con_user_2 = mysql.createConnection({
     host: "localhost",
     port: 3306,
-    user: process.env.DB_USER_2,
-    password: process.env.DB_PASSWORD_2,
+    user: dotenv.config().parsed.DB_USER_2 || process.env.DB_USER_2,
+    password: dotenv.config().parsed.DB_PASSWORD_2 || process.env.DB_PASSWORD_2,
 });
 
 con_user_2.connect(function (err) {
@@ -54,51 +55,46 @@ app.get("/", (req, res) => {
     res.send("Please do not ping root lol");
 });
 
-app.post("/login", (req, res) => {
-    let foundHash = "";
+app.post('/login', (req, res) => {
+    let foundHash = '';
 
     try {
-        con_user_1.query(
-            `
+        con_user_1.query(`
         SELECT passwordHash
         FROM customers
         WHERE username='${req.body.username}';`,
             (err, result) => {
                 if (err) throw err;
-                if (result["length"] == 0) {
-                } else {
-                    foundHash = result[0]["passwordHash"];
+                if (result['length'] == 0) { }
+                else {
+                    foundHash = (result[0]['passwordHash']);
                 }
                 //send tokens here
                 // console.log(foundHash);
-                if (foundHash == "") res.send("");
+                if (foundHash == '') res.send('');
                 else {
-                    let givenPassHashed = createHash("sha256")
-                        .update(req.body.password)
-                        .digest("hex");
+                    let givenPassHashed = createHash('sha256').update(req.body.password).digest('hex');
                     if (givenPassHashed == foundHash) {
-                        let token = jwt.sign(
-                            {
-                                user: req.body.username,
-                            },
-                            secret
-                        );
-                        res.cookie("accesscookie", token, {
-                            sameSite: "none",
-                            secure: true,
-                        });
-                        res.send("lol");
-                    } else {
-                        res.send("");
+                        let token = jwt.sign({
+                            user: req.body.username,
+                        }, secret)
+
+                        // make permanant to store??
+                        res.cookie('accesscookie', token, { sameSite: 'none', secure: true, maxAge: 300000 });
+                        res.send('correct');
+                    }
+                    else {
+                        res.send('wrong');
                     }
                 }
-            }
-        );
+            });
     } catch (error) {
         console.log("someone sent a faulty req");
         res.status(404);
     }
+
 });
+
 
 app.get("/register", (req, res) => {
     con_user_1.query(`SELECT 1`, (err, result) => {
