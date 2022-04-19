@@ -8,7 +8,7 @@ var cookieParser = require("cookie-parser");
 var express = require("express");
 const app = express();
 const port = 3000;
-const DATABASE_NAME = "BDSM";
+const DATABASE_NAME = process.env.databasename || "BDSM";
 
 app.use(
   cors({
@@ -42,7 +42,7 @@ app.use((err, req, res, next) => {
 })
 
 var con_user_1 = mysql.createConnection({
-  host: "localhost",
+  host: process.env.host || "localhost",
   port: 3306,
   user: process.env.DB_USER_1 || dotenv.config().parsed.DB_USER_1,
   password: process.env.DB_PASSWORD_1 || dotenv.config().parsed.DB_PASSWORD_1,
