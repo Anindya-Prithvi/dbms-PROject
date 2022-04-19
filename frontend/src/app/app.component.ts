@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
+import { axios } from 'src/utilities/axios';
 
 @Component({
   selector: 'app-root',
@@ -16,13 +16,23 @@ export class AppComponent {
 
   displaySavings: boolean = false;
 
+
   // See something for cookie disabled people
   constructor() {
-    if (sessionStorage.getItem('login') === 'true') {
-      this.isLoggedIn = true;
-    }
+    // if (sessionStorage.getItem('login') === 'true') {
+    //   this.isLoggedIn = true;
+    // }
+    axios.get('/login').then(response => {
+      this.isLoggedIn = (String(response.data) === 'true');
+    });
+    const checklogin = window.setInterval(() => {
+      axios.get('/login').then(response => {
+        this.isLoggedIn = (String(response.data) === 'true');
+        if (this.isLoggedIn == false) window.clearInterval(checklogin);
+      });
+    }, 60000); //check every minute if user is logged in
+  };
 
-  }
 
   loadSavings() {
     console.log("Savings uhdwudheuhload kar");
@@ -34,9 +44,14 @@ export class AppComponent {
   goHome() {
     this.displaySavings = false;
   }
+
   logout() {
     sessionStorage.setItem('login', 'false');
     this.isLoggedIn = false;
+    axios.get('/logout').then(response => {
+      console.log("satchel out");
+      // window.location.reload();
+    })
   }
 
   // loadData() {

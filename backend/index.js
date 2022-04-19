@@ -21,6 +21,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const secret = dotenv.config().parsed.secret || process.env.secret;
+function validateCookies(req, res, next) {
+  console.log(req.url);
+  if (req.cookies.accesscookie == null && req.url === "/login") {
+    console.log("Issuing cookie cookie");
+    next();
+  }
+  else if (req.cookies.accesscookie != null && jwt.verify(req.cookies.accesscookie, secret)) {
+    console.log("Cookie validated");
+    next();
+  }
+  else throw new Error("Invalid cookies/session expired")
+}
+
+app.use(validateCookies)
+
+// error handler
+app.use((err, req, res, next) => {
+  res.status(400).send(err.message)
+})
 
 var con_user_1 = mysql.createConnection({
   host: "localhost",
@@ -53,6 +72,11 @@ app.get("/", (req, res) => {
   console.log(req.body); //works with POST
   console.log(req.query); //works with GET
   res.send("Please do not ping root lol");
+});
+
+app.get("/login", (req, res) => {
+  if (req.cookies.accesscookie != null) res.send('true');
+  else res.send('false');
 });
 
 app.post("/login", (req, res) => {
@@ -89,7 +113,7 @@ app.post("/login", (req, res) => {
             res.cookie("accesscookie", token, {
               sameSite: "none",
               secure: true,
-              maxAge: 300000,
+              maxAge: 60000,
             });
             res.send("correct");
           } else {
@@ -103,6 +127,11 @@ app.post("/login", (req, res) => {
     res.status(404);
   }
 });
+
+app.get("/logout", (req, res) => {
+  res.cookie("accesscookie", req.cookies["accesscookie"], { maxAge: 0, sameSite: 'none', secure: true });
+  res.send("bye");
+})
 
 app.get("/register", (req, res) => {
   con_user_1.query(`SELECT 1`, (err, result) => {
