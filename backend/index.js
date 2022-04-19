@@ -166,12 +166,12 @@ app.get("/savingsBalance", (req, res) => {
   try {
     con_user_1.query(
       `
-        SELECT accounttype.customer_id, savingsAccount.balance as balance
+        SELECT accounttype.customer_id, savingsaccount.balance as balance
         FROM accounttype, savingsaccount 
         WHERE EXISTS(
             SELECT *
             FROM customers
-            WHERE customers.username = '${username}' AND savingsAccount.customerId = customers.pancard
+            WHERE customers.username = '${username}' AND savingsaccount.customerId = customers.pancard
         );`,
       (err, result) => {
         let balance = 0;
