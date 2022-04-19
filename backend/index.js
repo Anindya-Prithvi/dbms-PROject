@@ -1,5 +1,4 @@
 var mysql = require("mysql");
-var dotenv = require("dotenv");
 var cors = require("cors");
 const { createHash } = require("crypto");
 var jwt = require("jsonwebtoken");
@@ -20,13 +19,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const secret = dotenv.config().parsed.secret;
+const secret = process.env.secret;
 
 var con_user_1 = mysql.createConnection({
   host: "localhost",
   port: 3306,
-  user: dotenv.config().parsed.DB_USER_1,
-  password: dotenv.config().parsed.DB_PASSWORD_1,
+  user: process.env.DB_USER_1,
+  password: process.env.DB_PASSWORD_1,
 });
 
 con_user_1.connect(function (err) {
@@ -37,8 +36,8 @@ con_user_1.connect(function (err) {
 var con_user_2 = mysql.createConnection({
   host: "localhost",
   port: 3306,
-  user: dotenv.config().parsed.DB_USER_2,
-  password: dotenv.config().parsed.DB_PASSWORD_2,
+  user: process.env.DB_USER_2,
+  password: process.env.DB_PASSWORD_2,
 });
 
 con_user_2.connect(function (err) {
