@@ -170,7 +170,7 @@ app.get("/savingsTransaction", (req, res) => {
   try {
     // From savings account transactions
     con_user_1.query(
-      `SELECT * from transaction, savingsaccount, customers
+      `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId from transaction, savingsaccount, customers
         WHERE savingsaccount.customerId = customers.pancard 
         AND transaction.fromAcccustomerId = customers.pancard
         AND customers.username = '${username}'
@@ -188,6 +188,14 @@ app.get("/savingsTransaction", (req, res) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+app.post("/sendMoney", (req, res) => {
+  let jwtcookie = req.cookies["accesscookie"];
+  console.log(jwtcookie);
+  console.log(jwt.decode(jwtcookie));
+  let username = jwt.decode(jwtcookie)["user"];
+  // I have to workkkkkkk
 });
 
 app.listen(process.env.PORT || port);
