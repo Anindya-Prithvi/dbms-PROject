@@ -28,7 +28,7 @@ jobs:
       - run: npm install -g @angular/cli > /dev/null
       - run: npm install
         working-directory: ./frontend
-      - run: ng build --prod --output-path=../backend/dist --base-href /static/
+      - run: ng build --output-path=../backend/dist --base-href /static/
         working-directory: ./frontend
       - run: git add -f backend/dist
       # Deploy to another repo
