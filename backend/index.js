@@ -169,11 +169,12 @@ app.get("/savingsTransaction", (req, res) => {
   console.log("hello");
   try {
     // From savings account transactions
-    con_user_1.query(`SELECT txnId as transID from transaction, savingsaccount, customers
+    con_user_1.query(
+      `SELECT * from transaction, savingsaccount, customers
         WHERE savingsaccount.customerId = customers.pancard 
         AND transaction.fromAcccustomerId = customers.pancard
-        AND customers.username = '${username} limit 3'
-        ; `),
+        AND customers.username = '${username}'
+        ; `,
       (err, result) => {
         console.log(result);
         if (err) throw err;
@@ -182,7 +183,8 @@ app.get("/savingsTransaction", (req, res) => {
           console.log(result[0]["transID"]);
         }
         res.send("hello");
-      };
+      }
+    );
   } catch (error) {
     console.log(error);
   }
