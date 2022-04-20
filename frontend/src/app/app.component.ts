@@ -22,11 +22,11 @@ export class AppComponent {
     // if (sessionStorage.getItem('login') === 'true') {
     //   this.isLoggedIn = true;
     // }
-    axios.get('/login').then(response => {
+    axios.get('/api/v1/login').then(response => {
       this.isLoggedIn = (String(response.data) === 'true');
     });
     const checklogin = window.setInterval(() => {
-      axios.get('/login').then(response => {
+      axios.get('/api/v1/login').then(response => {
         this.isLoggedIn = (String(response.data) === 'true');
         if (this.isLoggedIn == false) window.clearInterval(checklogin);
       });
@@ -48,7 +48,7 @@ export class AppComponent {
   logout() {
     sessionStorage.setItem('login', 'false');
     this.isLoggedIn = false;
-    axios.get('/logout').then(response => {
+    axios.get('/api/v1/logout').then(response => {
       console.log("satchel out");
       // window.location.reload();
     })

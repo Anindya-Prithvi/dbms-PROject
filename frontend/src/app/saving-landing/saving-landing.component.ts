@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {axios} from '../../utilities/axios';
+import { axios } from '../../utilities/axios';
 
 @Component({
   selector: 'app-saving-landing',
@@ -10,7 +10,7 @@ export class SavingLandingComponent implements OnInit {
   balance: String = "";
   showPassbook = false;
 
-  constructor() { 
+  constructor() {
     this.getBalance();
   }
 
@@ -19,7 +19,7 @@ export class SavingLandingComponent implements OnInit {
   }
 
   getBalance() {
-    return axios.get("/savingsBalance").then(response => {
+    return axios.get("/api/v1/savingsBalance").then(response => {
       console.log("OYE BALANCE: " + response.data);
       console.log(response.data);
       this.balance = response.data;
@@ -28,7 +28,7 @@ export class SavingLandingComponent implements OnInit {
   }
 
   sendMoney() {
-   console.log("Paisa Bhej");
+    console.log("Paisa Bhej");
   }
 
   showTransactions() {

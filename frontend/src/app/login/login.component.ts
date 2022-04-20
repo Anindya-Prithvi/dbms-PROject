@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     console.log(this.logincreds.value);
     //use login endpoint
-    axios.post('/login', this.logincreds.value).then(response => {
+    axios.post('/api/v1/login', this.logincreds.value).then(response => {
       console.log(response.data);
       console.log(response);
 
