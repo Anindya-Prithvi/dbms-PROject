@@ -19,12 +19,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use('/static', express.static('dist'))
+app.use(express.static('dist'))
 
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
   console.log(req.url);
-  if (req.cookies.accesscookie == null && (req.url === "/login" || req.url.match('/static/.+'))) {
+  if (req.cookies.accesscookie == null && (req.url.match("/api/v[0-9]+/login") || !req.url.match('/api.*'))) {
     console.log("Issuing cookie cookie");
     next();
   }
@@ -69,18 +69,18 @@ con_user_2.connect(function (err) {
 con_user_1.query(`USE ${DATABASE_NAME}`);
 con_user_2.query(`USE ${DATABASE_NAME}`);
 
-app.get("/", (req, res) => {
+app.get("/api/v1/", (req, res) => {
   console.log(req.body); //works with POST
   console.log(req.query); //works with GET
-  res.send("Please do not ping root lol");
+  res.send("Please do not GET api root lol");
 });
 
-app.get("/login", (req, res) => {
+app.get("/api/v1/login", (req, res) => {
   if (req.cookies.accesscookie != null) res.send('true');
   else res.send('false');
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/v1/login", (req, res) => {
   let foundHash = "";
 
   try {
@@ -129,12 +129,12 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.get("/logout", (req, res) => {
+app.get("/api/v1/logout", (req, res) => {
   res.cookie("accesscookie", req.cookies["accesscookie"], { maxAge: 0, sameSite: 'none', secure: true });
   res.send("bye");
 })
 
-app.get("/register", (req, res) => {
+app.get("/api/v1/register", (req, res) => {
   con_user_1.query(`SELECT 1`, (err, result) => {
     if (err) throw err;
     console.log(result);
@@ -142,7 +142,7 @@ app.get("/register", (req, res) => {
   res.send("Working");
 });
 
-app.post("/register", (req, res) => {
+app.post("/api/v1/register", (req, res) => {
   con_user_1.query(`-- INSERT INTO ${req.body}`, (err, result) => {
     if (err) throw err;
     console.log(result);
@@ -151,7 +151,7 @@ app.post("/register", (req, res) => {
   });
 });
 
-app.get("/savingsBalance", (req, res) => {
+app.get("/api/v1/savingsBalance", (req, res) => {
   let jwtcookie = req.cookies["accesscookie"];
   console.log(jwtcookie);
   console.log(jwt.decode(jwtcookie));
@@ -194,7 +194,7 @@ app.get("/savingsBalance", (req, res) => {
   console.log("ASDASD" + customerId);
 });
 
-app.get("/savingsTransaction", (req, res) => {
+app.get("/api/v1/savingsTransaction", (req, res) => {
   let jwtcookie = req.cookies["accesscookie"];
   console.log(jwtcookie);
   console.log(jwt.decode(jwtcookie));
@@ -251,7 +251,7 @@ app.get("/savingsTransaction", (req, res) => {
   }
 });
 
-app.post("/sendMoney", (req, res) => {
+app.post("/api/v1/sendMoney", (req, res) => {
   let jwtcookie = req.cookies["accesscookie"];
   console.log(jwtcookie);
   console.log(jwt.decode(jwtcookie));

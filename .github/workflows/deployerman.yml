@@ -6,8 +6,14 @@ name: deployerman
 on:
   push:
       branches: [ main ]
+      paths:
+        - 'frontend/**'
+        - 'backend/**'
   pull_request:
       branches: [ main ]
+      paths:
+        - 'frontend/**'
+        - 'backend/**' 
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -28,7 +34,7 @@ jobs:
       - run: npm install -g @angular/cli > /dev/null
       - run: npm install
         working-directory: ./frontend
-      - run: ng build --output-path=../backend/dist --base-href /static/
+      - run: ng build --output-path=../backend/dist
         working-directory: ./frontend
       - run: git add -f backend/dist
       # Deploy to another repo
@@ -39,7 +45,3 @@ jobs:
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           appdir: "backend" # <- This will point to the api folder in your project
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Done ig???
