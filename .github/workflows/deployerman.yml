@@ -6,8 +6,14 @@ name: deployerman
 on:
   push:
       branches: [ main ]
+      paths:
+        - 'frontend/**'
+        - 'backend/**'
   pull_request:
       branches: [ main ]
+      paths:
+        - 'frontend/**'
+        - 'backend/**' 
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
