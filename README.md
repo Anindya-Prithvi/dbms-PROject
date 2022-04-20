@@ -1,4 +1,4 @@
-# Banking Database and Systems Management
+# Banking Database and Systems Management [![build and deploy](https://github.com/Anindya-Prithvi/dbms-PROject/actions/workflows/deployerman.yml/badge.svg)](https://github.com/Anindya-Prithvi/dbms-PROject/actions/workflows/deployerman.yml)
 This repository contains all the frontend, backend code and sql schematics. The frontend is made with the
 help of Angular (yes, typescript is nice). The backend is written in NodeJS, connected to the database without using
 any fancy bloat applications. The database is in mysql.
@@ -25,11 +25,6 @@ any fancy bloat applications. The database is in mysql.
   ```
   Remember to replace `user1, user2, pass1, pass2` appropriately.  
   For developing the backend use `npm i -g nodemon` and once it is done, fire up a shell and run `npm serve`. This should get the backend live and have some form of crash protection. If you don't want it, just use `npm start`.
-- Run the frontend (dev mode)  
-  Create another `.env` file in `frontend/src`. Add the following:
-  ```
-  backend='localhost:3000'
-  ```
-  Remember to change your port if you have modified anything.  
-  That's it, fire up a shell and run `ng serve`. Enjoy the webpage! And make pull requests.
+- Run the frontend (dev mode)
+  Fire up a shell and run `ng serve`. Enjoy the webpage! And make pull requests.
 
