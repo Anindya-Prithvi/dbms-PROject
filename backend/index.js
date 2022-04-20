@@ -10,7 +10,7 @@ const app = express();
 const port = 3000;
 const DATABASE_NAME = process.env.databasename || "BDSM";
 
-app.use(
+process.env.staticdist || app.use(
   cors({
     origin: ["http://localhost:4200", "https://anindya-prithvi.github.io"],
     credentials: true,
@@ -19,7 +19,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static('dist'))
+process.env.staticdist || app.use(express.static('dist'))
 
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
@@ -41,6 +41,17 @@ app.use(validateCookies)
 app.use((err, req, res, next) => {
   res.status(400).send(err.message)
 })
+
+function injectInfofromJWT(req, res, next) {
+  let jwtcookie = req.cookies["accesscookie"];
+  if (jwtcookie != null) {
+    req.username = jwt.decode(jwtcookie)["user"];
+  }
+  // might inject PAN here
+  next();
+}
+
+app.use(injectInfofromJWT)
 
 var con_user_1 = mysql.createConnection({
   host: process.env.host || "localhost",
@@ -152,16 +163,10 @@ app.post("/api/v1/register", (req, res) => {
 });
 
 app.get("/api/v1/savingsBalance", (req, res) => {
-  let jwtcookie = req.cookies["accesscookie"];
-  console.log(jwtcookie);
-  console.log(jwt.decode(jwtcookie));
-  let username = jwt.decode(jwtcookie)["user"];
+
+  let username = req.username;
   console.log(username);
   var customerId;
-  // con_user_1.query(`SELECT 1`, (err, result) => {
-  //     if (err) throw err;
-  //     console.log(result);
-  // });
 
   try {
     con_user_1.query(
@@ -186,7 +191,6 @@ app.get("/api/v1/savingsBalance", (req, res) => {
       }
     );
 
-    // console.log("TEST: " + test);
   } catch (error) {
     console.log("someone sent a faulty req");
     res.status(404);
@@ -195,10 +199,7 @@ app.get("/api/v1/savingsBalance", (req, res) => {
 });
 
 app.get("/api/v1/savingsTransaction", (req, res) => {
-  let jwtcookie = req.cookies["accesscookie"];
-  console.log(jwtcookie);
-  console.log(jwt.decode(jwtcookie));
-  let username = jwt.decode(jwtcookie)["user"];
+  let username = req.username;
   console.log("hello");
   try {
     // From savings account transactions
@@ -252,10 +253,7 @@ app.get("/api/v1/savingsTransaction", (req, res) => {
 });
 
 app.post("/api/v1/sendMoney", (req, res) => {
-  let jwtcookie = req.cookies["accesscookie"];
-  console.log(jwtcookie);
-  console.log(jwt.decode(jwtcookie));
-  let username = jwt.decode(jwtcookie)["user"];
+  let username = req.username;
   try {
     // Insert values for transactions
   } catch (error) {

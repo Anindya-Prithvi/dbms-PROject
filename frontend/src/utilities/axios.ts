@@ -1,9 +1,8 @@
-import { isDevMode } from '@angular/core';
 import axios_base from 'axios';
+import { environment } from '../environments/environment';
 
-//#TODO:Disallow in productions
 export const axios = axios_base.create({
-    baseURL: !isDevMode() ? undefined : 'http://127.0.0.1:3000', //just remove this, requests shall go to /whatever
+    baseURL: environment.production ? undefined : 'http://127.0.0.1:3000',
     withCredentials: true,
 })
 
