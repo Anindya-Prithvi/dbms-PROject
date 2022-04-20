@@ -46,6 +46,7 @@ function injectInfofromJWT(req, res, next) {
   let jwtcookie = req.cookies["accesscookie"];
   if (jwtcookie != null) {
     req.username = jwt.decode(jwtcookie)["user"];
+    req.PAN = jwt.decode(jwtcookie)["pan"];
   }
   // might inject PAN here
   next();
@@ -93,11 +94,12 @@ app.get("/api/v1/login", (req, res) => {
 
 app.post("/api/v1/login", (req, res) => {
   let foundHash = "";
+  let foundPAN = "";
 
   try {
     con_user_1.query(
       `
-        SELECT passwordHash
+        SELECT passwordHash, pancard
         FROM customers
         WHERE username='${req.body.username}';`,
       (err, result) => {
@@ -105,6 +107,7 @@ app.post("/api/v1/login", (req, res) => {
         if (result["length"] == 0) {
         } else {
           foundHash = result[0]["passwordHash"];
+          foundPAN = result[0]["pancard"];
         }
         //send tokens here
         // console.log(foundHash);
@@ -117,13 +120,14 @@ app.post("/api/v1/login", (req, res) => {
             let token = jwt.sign(
               {
                 user: req.body.username,
+                pan: foundPAN
               },
               secret
             );
 
             // make permanant to store??
             res.cookie("accesscookie", token, {
-              sameSite: "none",
+              sameSite: process.env.sameSite || "none",
               secure: true,
               maxAge: 60000,
             });
