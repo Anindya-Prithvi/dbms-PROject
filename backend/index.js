@@ -44,9 +44,23 @@ app.use((err, req, res, next) => {
 
 function injectInfofromJWT(req, res, next) {
   let jwtcookie = req.cookies["accesscookie"];
+
   if (jwtcookie != null) {
     req.username = jwt.decode(jwtcookie)["user"];
     req.PAN = jwt.decode(jwtcookie)["pan"];
+  }
+
+  if (req.url === '/api/v1/logout' || req.url === '/api/v1/login') { }
+  else {
+    console.log('reissuing cookie');
+    res.cookie("accesscookie", jwt.sign({
+      user: req.username,
+      pan: req.PAN
+    }, secret), {
+      sameSite: process.env.sameSite || "none",
+      secure: true,
+      maxAge: 60000,
+    });
   }
   // might inject PAN here
   next();
@@ -204,7 +218,7 @@ app.get("/api/v1/savingsBalance", (req, res) => {
 
 app.get("/api/v1/savingsTransaction", (req, res) => {
   let username = req.username;
-  console.log("hello");
+  console.log(`hello ${username}`);
   try {
     // From savings account transactions
     con_user_1.query(
