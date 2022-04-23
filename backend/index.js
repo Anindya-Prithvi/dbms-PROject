@@ -237,22 +237,27 @@ function showTransactions(result) {
     transactionDetails.push(result[i]["transID"].toString());
     transactionDetails.push(result[i]["amount"].toString());
     transactionDetails.push(result[i]["timeOfTransaction"].toString());
-    transactionDetails.push(result[i]["toAccount"].toString());
+    if (!(String(result[i]["toAccount"]) === "null")) {
+      transactionDetails.push(result[i]["toAccount"].toString());
+    } else {
+      transactionDetails.push("");
+    }
+
     transactionDetails.push(result[i]["fromAcccustomerId"].toString());
     if (!(String(result[i]["chequeNo"]) === "null")) {
       transactionDetails.push("CHEQUE");
       transactionDetails.push(result[i]["chequeNo"].toString());
     } else if (!(String(result[i]["creditcardNo"]) === "null")) {
-      transactionDetails.push("CREDITCARD");
+      transactionDetails.push("CREDIT CARD");
       transactionDetails.push(result[i]["creditcardNo"].toString());
     } else if (!(String(result[i]["ATMId"]) === "null")) {
       transactionDetails.push("ATM");
       transactionDetails.push(result[i]["ATMCardNo"].toString());
     } else if (!(String(result[i]["debitCardNo"]) === "null")) {
-      transactionDetails.push("DEBIT");
+      transactionDetails.push("DEBIT CARD");
       transactionDetails.push(result[i]["debitCardNo"].toString());
     } else {
-      transactionDetails.push("ACCOUNTTOACCOUNT");
+      transactionDetails.push("ACCOUNT TO ACCOUNT");
       transactionDetails.push("");
     }
     transactions.push(transactionDetails);

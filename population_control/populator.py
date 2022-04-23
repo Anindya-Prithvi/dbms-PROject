@@ -813,7 +813,7 @@ class Transaction:
         savingsaccounts,
         loansaccounts,
         ccaccount,
-        n=100000,
+        n=5000,
     ):
         values = []
         for i in cheques:
