@@ -9,6 +9,7 @@ import { axios } from '../../utilities/axios';
 export class SavingLandingComponent implements OnInit {
   balance: String = "";
   showPassbook = false;
+  showSendMoney = false;
 
   constructor() {
     this.getBalance();
@@ -29,11 +30,14 @@ export class SavingLandingComponent implements OnInit {
 
   sendMoney() {
     console.log("Paisa Bhej");
+    this.showSendMoney = true;
+    this.showPassbook = false;
   }
 
   showTransactions() {
     console.log("Passbook Dhika!");
     this.showPassbook = true;
+    this.showSendMoney = false;
   }
 
 }

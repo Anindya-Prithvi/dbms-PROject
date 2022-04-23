@@ -13,6 +13,9 @@ import { CookieService } from 'ngx-cookie-service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SavingLandingComponent } from './saving-landing/saving-landing.component';
 import { SavingPassbookComponent } from './saving-passbook/saving-passbook.component';
+import { SavingPassbookSendMoneyComponent } from './saving-passbook-send-money/saving-passbook-send-money.component';
+import { SavingPassbookSendMoneyDebitCardComponent } from './saving-passbook-send-money-debit-card/saving-passbook-send-money-debit-card.component';
+import { SavingPassbookSendMoneyCreditCardComponent } from './saving-passbook-send-money-credit-card/saving-passbook-send-money-credit-card.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +24,10 @@ import { SavingPassbookComponent } from './saving-passbook/saving-passbook.compo
     LoginComponent,
     SignupComponent,
     SavingLandingComponent,
-    SavingPassbookComponent
+    SavingPassbookComponent,
+    SavingPassbookSendMoneyComponent,
+    SavingPassbookSendMoneyDebitCardComponent,
+    SavingPassbookSendMoneyCreditCardComponent
   ],
   imports: [
     BrowserModule,

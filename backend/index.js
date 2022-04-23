@@ -10,37 +10,42 @@ const app = express();
 const port = 3000;
 const DATABASE_NAME = process.env.databasename || "BDSM";
 
-process.env.staticdist || app.use(
-  cors({
-    origin: ["http://localhost:4200", "https://anindya-prithvi.github.io"],
-    credentials: true,
-  })
-); //#TODO:remove in production
+process.env.staticdist ||
+  app.use(
+    cors({
+      origin: ["http://localhost:4200", "https://anindya-prithvi.github.io"],
+      credentials: true,
+    })
+  ); //#TODO:remove in production
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-process.env.staticdist || app.use(express.static('dist'))
+process.env.staticdist || app.use(express.static("dist"));
 
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
   console.log(req.url);
-  if (req.cookies.accesscookie == null && (req.url.match("/api/v[0-9]+/login") || !req.url.match('/api.*'))) {
+  if (
+    req.cookies.accesscookie == null &&
+    (req.url.match("/api/v[0-9]+/login") || !req.url.match("/api.*"))
+  ) {
     console.log("Issuing cookie cookie");
     next();
-  }
-  else if (req.cookies.accesscookie != null && jwt.verify(req.cookies.accesscookie, secret)) {
+  } else if (
+    req.cookies.accesscookie != null &&
+    jwt.verify(req.cookies.accesscookie, secret)
+  ) {
     console.log("Cookie validated");
     next();
-  }
-  else throw new Error("Invalid cookies/session expired")
+  } else throw new Error("Invalid cookies/session expired");
 }
 
-app.use(validateCookies)
+app.use(validateCookies);
 
 // error handler
 app.use((err, req, res, next) => {
-  res.status(400).send(err.message)
-})
+  res.status(400).send(err.message);
+});
 
 function injectInfofromJWT(req, res, next) {
   let jwtcookie = req.cookies["accesscookie"];
@@ -50,23 +55,30 @@ function injectInfofromJWT(req, res, next) {
     req.PAN = jwt.decode(jwtcookie)["pan"];
   }
 
-  if (req.url === '/api/v1/logout' || req.url === '/api/v1/login') { }
-  else {
-    console.log('reissuing cookie');
-    res.cookie("accesscookie", jwt.sign({
-      user: req.username,
-      pan: req.PAN
-    }, secret), {
-      sameSite: process.env.sameSite || "none",
-      secure: true,
-      maxAge: 60000,
-    });
+  if (req.url === "/api/v1/logout" || req.url === "/api/v1/login") {
+  } else {
+    console.log("reissuing cookie");
+    res.cookie(
+      "accesscookie",
+      jwt.sign(
+        {
+          user: req.username,
+          pan: req.PAN,
+        },
+        secret
+      ),
+      {
+        sameSite: process.env.sameSite || "none",
+        secure: true,
+        maxAge: 60000,
+      }
+    );
   }
   // might inject PAN here
   next();
 }
 
-app.use(injectInfofromJWT)
+app.use(injectInfofromJWT);
 
 var con_user_1 = mysql.createConnection({
   host: process.env.host || "localhost",
@@ -102,8 +114,8 @@ app.get("/api/v1/", (req, res) => {
 });
 
 app.get("/api/v1/login", (req, res) => {
-  if (req.cookies.accesscookie != null) res.send('true');
-  else res.send('false');
+  if (req.cookies.accesscookie != null) res.send("true");
+  else res.send("false");
 });
 
 app.post("/api/v1/login", (req, res) => {
@@ -134,7 +146,7 @@ app.post("/api/v1/login", (req, res) => {
             let token = jwt.sign(
               {
                 user: req.body.username,
-                pan: foundPAN
+                pan: foundPAN,
               },
               secret
             );
@@ -159,9 +171,13 @@ app.post("/api/v1/login", (req, res) => {
 });
 
 app.get("/api/v1/logout", (req, res) => {
-  res.cookie("accesscookie", req.cookies["accesscookie"], { maxAge: 0, sameSite: 'none', secure: true });
+  res.cookie("accesscookie", req.cookies["accesscookie"], {
+    maxAge: 0,
+    sameSite: "none",
+    secure: true,
+  });
   res.send("bye");
-})
+});
 
 app.get("/api/v1/register", (req, res) => {
   con_user_1.query(`SELECT 1`, (err, result) => {
@@ -181,7 +197,6 @@ app.post("/api/v1/register", (req, res) => {
 });
 
 app.get("/api/v1/savingsBalance", (req, res) => {
-
   let username = req.username;
   console.log(username);
   var customerId;
@@ -208,13 +223,42 @@ app.get("/api/v1/savingsBalance", (req, res) => {
         res.send(balance.toString());
       }
     );
-
   } catch (error) {
     console.log("someone sent a faulty req");
     res.status(404);
   }
   console.log("ASDASD" + customerId);
 });
+
+function showTransactions(result) {
+  var transactions = [];
+  for (let i = 0; i < result["length"]; i++) {
+    var transactionDetails = [];
+    transactionDetails.push(result[i]["transID"].toString());
+    transactionDetails.push(result[i]["amount"].toString());
+    transactionDetails.push(result[i]["timeOfTransaction"].toString());
+    transactionDetails.push(result[i]["toAccount"].toString());
+    transactionDetails.push(result[i]["fromAcccustomerId"].toString());
+    if (!(String(result[i]["chequeNo"]) === "null")) {
+      transactionDetails.push("CHEQUE");
+      transactionDetails.push(result[i]["chequeNo"].toString());
+    } else if (!(String(result[i]["creditcardNo"]) === "null")) {
+      transactionDetails.push("CREDITCARD");
+      transactionDetails.push(result[i]["creditcardNo"].toString());
+    } else if (!(String(result[i]["ATMId"]) === "null")) {
+      transactionDetails.push("ATM");
+      transactionDetails.push(result[i]["ATMCardNo"].toString());
+    } else if (!(String(result[i]["debitCardNo"]) === "null")) {
+      transactionDetails.push("DEBIT");
+      transactionDetails.push(result[i]["debitCardNo"].toString());
+    } else {
+      transactionDetails.push("ACCOUNTTOACCOUNT");
+      transactionDetails.push("");
+    }
+    transactions.push(transactionDetails);
+  }
+  return transactions;
+}
 
 app.get("/api/v1/savingsTransaction", (req, res) => {
   let username = req.username;
@@ -223,44 +267,138 @@ app.get("/api/v1/savingsTransaction", (req, res) => {
     // From savings account transactions
     con_user_1.query(
       `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
-        creditcardNo, ATMId, ATMCardNo 
-        from transaction, savingsaccount, customers
-        WHERE savingsaccount.customerId = customers.pancard 
-        AND transaction.fromAcccustomerId = customers.pancard
-        AND customers.username = '${username}'
-        ; `,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, savingsaccount, customers
+      WHERE savingsaccount.customerId = customers.pancard 
+      AND transaction.fromAcccustomerId = customers.pancard
+      AND customers.username = '${username}'
+UNION
+SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, savingsaccount, customers
+      WHERE savingsaccount.customerId = customers.pancard 
+      AND transaction.toAccount = savingsaccount.accountNo
+      AND customers.username = '${username}'
+      ; `,
       (err, result) => {
         console.log(result);
-        const transactions = [];
+        var transactions = [];
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
           console.log(result["length"]);
-          for (let i = 0; i < result["length"]; i++) {
-            const transactionDetails = [];
-            transactionDetails.push(result[i]["transID"].toString());
-            transactionDetails.push(result[i]["amount"].toString());
-            transactionDetails.push(result[i]["timeOfTransaction"].toString());
-            transactionDetails.push(result[i]["toAccount"].toString());
-            transactionDetails.push(result[i]["fromAcccustomerId"].toString());
-            if (!(String(result[i]["chequeNo"]) === "null")) {
-              transactionDetails.push("CHEQUE");
-              transactionDetails.push(result[i]["chequeNo"].toString());
-            } else if (!(String(result[i]["creditcardNo"]) === "null")) {
-              transactionDetails.push("CREDITCARD");
-              transactionDetails.push(result[i]["creditcardNo"].toString());
-            } else if (!(String(result[i]["ATMId"]) === "null")) {
-              transactionDetails.push("ATM");
-              transactionDetails.push(result[i]["ATMCardNo"].toString());
-            } else if (!(String(result[i]["debitCardNo"]) === "null")) {
-              transactionDetails.push("DEBIT");
-              transactionDetails.push(result[i]["debitCardNo"].toString());
-            } else {
-              transactionDetails.push("ACCOUNTTOACCOUNT");
-              transactionDetails.push("");
-            }
-            transactions.push(transactionDetails);
-          }
+          transactions = showTransactions(result);
+        }
+        res.send(transactions);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/currentTransaction", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From current account transactions
+    con_user_1.query(
+      `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, currentaccount, customers
+      WHERE currentaccount.customerId = customers.pancard 
+      AND transaction.fromAcccustomerId = customers.pancard
+      AND customers.username = '${username}'
+UNION
+SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, currentaccount, customers
+      WHERE currentaccount.customerId = customers.pancard 
+      AND transaction.toAccount = currentaccount.accountNo
+      AND customers.username = '${username}'
+      ; `,
+      (err, result) => {
+        console.log(result);
+        var transactions = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          transactions = showTransactions(result);
+        }
+        res.send(transactions);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/loanTransaction", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From loan account transactions
+    con_user_1.query(
+      `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, loanaccount, customers
+      WHERE loanaccount.customerId = customers.pancard 
+      AND transaction.fromAcccustomerId = customers.pancard
+      AND customers.username = '${username}'
+UNION
+SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, loanaccount, customers
+      WHERE loanaccount.customerId = customers.pancard 
+      AND transaction.toAccount = loanaccount.accountNo
+      AND customers.username = '${username}'
+      ; `,
+      (err, result) => {
+        console.log(result);
+        var transactions = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          transactions = showTransactions(result);
+        }
+        res.send(transactions);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/creditTransaction", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, creditcardaccount, customers
+      WHERE creditcardaccount.customerId = customers.pancard 
+      AND transaction.fromAcccustomerId = customers.pancard
+      AND customers.username = '${username}'
+UNION
+SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
+      creditcardNo, ATMId, ATMCardNo 
+      from transaction, creditcardaccount, customers
+      WHERE creditcardaccount.customerId = customers.pancard 
+      AND transaction.toAccount = creditcardaccount.accountNo
+      AND customers.username = '${username}'
+      ; `,
+      (err, result) => {
+        console.log(result);
+        var transactions = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          transactions = showTransactions(result);
         }
         res.send(transactions);
       }
