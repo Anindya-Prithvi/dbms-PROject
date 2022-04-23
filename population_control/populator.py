@@ -77,7 +77,7 @@ class Customer:
                 + random.choice(string.ascii_uppercase)
             )
         for pan in PANnumbers:
-            print(f"Adding user for pan: {pan}")
+            #print(f"Adding user for pan: {pan}")
             creditScore: int = random.randint(1, 100)
             customerName: str = Customer.get_name(names)
             values.append(
@@ -146,7 +146,7 @@ class Manager:
                 with open("data/LoginDumpManager", "a") as f:
                     f.write(f"{empIds[i]} {password}")
             except:
-                print(f"Manager level user/empid: {empIds[i]}, password {password}")
+                print(f"Manager level write fail user/empid: {empIds[i]}, password {password}")
             values.append(
                 (
                     empIds[i],
@@ -832,23 +832,32 @@ class Transaction:
                 ).zfill(18)[::-1]
             )
             toacc = i[2]
-            totype = "'SAV'" if i[4] != "null" else "'CUR'"
+            # totype = "'SAV'" if i[4] != "null" else "'CUR'"
+            for temp in savingsaccounts:
+                if temp[0]==i[2]: 
+                    totype="'SAV'"
+                    fromcustpan = temp[-1]
+                    fromcustserno = temp[-2]
+            for temp in currentaccounts: 
+                if temp[0]==i[2]: 
+                    totype="'CUR'"
+                    fromcustpan = temp[-1]
+                    fromcustserno = temp[-2]
+            for temp in loansaccounts: 
+                if temp[0]==i[2]: 
+                    totype="'LON'"
+                    fromcustpan = temp[-1]
+                    fromcustserno = temp[-2]
+            for temp in ccaccount: 
+                if temp[0]==i[2]: 
+                    totype="'CRD'"
+                    fromcustpan = temp[-1]
+                    fromcustserno = temp[-2]
             modeOfPayment = "'ONL'"
             amount = i[3]
             chequeno = i[0]
             dcno = ccno = atmid = atmcardno = "null"
-            fromcustserno = 0
-            fromcustpan = "pan"
-            if totype == "'SAV'":
-                for savacc in savingsaccounts:
-                    if savacc[0] == i[4]:
-                        fromcustpan = savacc[-1]
-                        fromcustserno = savacc[-2]
-            else:
-                for curacc in currentaccounts:
-                    if curacc[0] == i[5]:
-                        fromcustpan = curacc[-1]
-                        fromcustserno = curacc[-2]
+            
             values.append(
                 (
                     txnId,
@@ -884,7 +893,7 @@ class Transaction:
                 ).zfill(18)[::-1]
             )
             toacctype = secrets.choice([0,1,2,3]) 
-            encodes = ["'CUR'","'SAV'","'LON'", "'CRE'"]
+            encodes = ["'CUR'","'SAV'","'LON'", "'CRD'"]
             totype = encodes[toacctype]
             if totype == "'SAV'":
                 toacc = secrets.choice(savingsaccounts)
@@ -892,7 +901,7 @@ class Transaction:
                 toacc = secrets.choice(currentaccounts)
             elif totype == "'LON'":
                 toacc = secrets.choice(loansaccounts)
-            elif totype == "'CRE'":
+            elif totype == "'CRD'":
                 toacc = secrets.choice(ccaccount)
             modeOfPayment = "'ONL'"
             amount = random.randint(100,900000)*10
@@ -902,14 +911,14 @@ class Transaction:
             chequeno=dcno=ccno=atmid=atmcardno="null"
                 
             fromacctype = secrets.choice([0,1,2])
-            fromenc = ["'SAV'","'CUR'","'CRE'"]
+            fromenc = ["'SAV'","'CUR'","'CRD'"]
             fromtype = fromenc[fromacctype]
 
             if fromtype == "'SAV'":
                 fromacc = secrets.choice(savingsaccounts)
             elif fromtype == "'CUR'":
                 fromacc = secrets.choice(currentaccounts)
-            elif fromtype == "'CRE'":
+            elif fromtype == "'CRD'":
                 fromacc = secrets.choice(ccaccount)
 
             if random.random()>0.6:
@@ -918,9 +927,12 @@ class Transaction:
                         if debitcard[-1]==fromacc[0]:
                             dcno = debitcard[0]
                     if random.random()>0.4:
+                        toacc = "null"
+                        totype = "null"
+                        modeOfPayment = "'OFF'"
                         atmid = random.choice(atms)[0]
                         atmcardno = dcno
-                elif fromtype=="'CRE'":
+                elif fromtype=="'CRD'":
                     for creditcard in creditcards:
                         if creditcard[-1]==fromacc[0]:
                             ccno = creditcard[0]
@@ -928,7 +940,7 @@ class Transaction:
 
             values.append((
                 txnId,
-                toacc[0],
+                toacc[0] if toacc!="null" else toacc,
                 totype,
                 modeOfPayment,
                 amount,
