@@ -56,8 +56,8 @@ export class AppComponent {
   }
 
   logout() {
-    sessionStorage.setItem('login', 'false');
     this.isLoggedIn = false;
+    this.managerisLoggedIn = false;
     axios.get('/api/v1/logout').then(response => {
       console.log("satchel out");
       // window.location.reload();
