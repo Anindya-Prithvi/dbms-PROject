@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { CookieService } from 'ngx-cookie-service';
 import { axios } from '../../utilities/axios';
 
 @Component({
@@ -9,14 +8,17 @@ import { axios } from '../../utilities/axios';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  csx: CookieService;
+
   logincreds = new FormGroup({
-    username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_]*')]),
-    password: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_-]*')])
+    username: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_\.]+')]),
+    password: new FormControl('', [Validators.required, Validators.pattern('[a-zA-Z0-9_\. -]+')])
   })
 
-  constructor(csx: CookieService) {
-    this.csx = csx;
+  @Input()
+  logintype: string | undefined = undefined;
+
+  constructor() {
+
   }
 
   ngOnInit(): void {
@@ -25,13 +27,13 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
     console.log(this.logincreds.value);
     //use login endpoint
-    axios.post('/api/v1/login', this.logincreds.value).then(response => {
+    axios.post('/api/v1/' + (this.logintype === 'user' ? 'login' : 'managerlogin'), this.logincreds.value).then(response => {
       console.log(response.data);
       console.log(response);
 
       // localStorage.setItem('accesscookie', response.data);
       // if (response.data === "correct") { sessionStorage.setItem('login', 'true') };
-      window.location.reload();
+      window.location.reload(); //comment out at debugging
     })
   }
 

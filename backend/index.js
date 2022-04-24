@@ -24,12 +24,12 @@ process.env.staticdist || app.use(express.static("dist"));
 
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
-  console.log(req.url);
+  console.log(`validation logger, request url: ${req.url}`);
   if (
     req.cookies.accesscookie == null &&
-    (req.url.match("/api/v[0-9]+/login") || !req.url.match("/api.*"))
+    (req.url.match("/api/v[0-9]+/login") || req.url.match("/api/v[0-9]+/managerlogin") || !req.url.match("/api.*"))
   ) {
-    console.log("Issuing cookie cookie");
+    // console.log("Should issue cookie soon");
     next();
   } else if (
     req.cookies.accesscookie != null &&
@@ -52,19 +52,16 @@ function injectInfofromJWT(req, res, next) {
 
   if (jwtcookie != null) {
     req.username = jwt.decode(jwtcookie)["user"];
-    req.PAN = jwt.decode(jwtcookie)["pan"];
+    req.PAN = jwt.decode(jwtcookie)["pan"]; //note this will be undefined for manager tokens
   }
 
-  if (req.url === "/api/v1/logout" || req.url === "/api/v1/login") {
+  if (req.url === "/api/v1/logout" || req.url === "/api/v1/login" || req.url === "/api/v1/managerlogin") {
   } else {
-    console.log("reissuing cookie");
+    console.log(`reissuing cookie given url ${req.url}`);
     res.cookie(
       "accesscookie",
       jwt.sign(
-        {
-          user: req.username,
-          pan: req.PAN,
-        },
+        jwt.decode(jwtcookie),
         secret
       ),
       {
@@ -114,7 +111,7 @@ app.get("/api/v1/", (req, res) => {
 });
 
 app.get("/api/v1/login", (req, res) => {
-  if (req.cookies.accesscookie != null) res.send("true");
+  if (req.PAN != undefined && req.username != undefined) res.send("true");
   else res.send("false");
 });
 
@@ -178,6 +175,61 @@ app.get("/api/v1/logout", (req, res) => {
   });
   res.send("bye");
 });
+
+app.get("/api/v1/managerlogin", (req, res) => {
+  if (req.PAN === undefined && req.username != undefined) res.send("true");
+  else res.send("false");
+});
+// note user==empid, so req.username and user in jwt cookie shall stay consistent for managers
+app.post("/api/v1/managerlogin", (req, res) => {
+  let foundHash = "";
+  try {
+    con_user_1.query(
+      `
+        SELECT password_hash
+        FROM manager
+        WHERE empID='${req.body.username}';`,
+      (err, result) => {
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          foundHash = result[0]["password_hash"];
+        }
+        //send tokens here
+        // console.log(foundHash);
+        if (foundHash == "") res.send("");
+        else {
+          let givenPassHashed = createHash("sha256")
+            .update(req.body.password)
+            .digest("hex");
+          if (givenPassHashed == foundHash) {
+            let token = jwt.sign(
+              {
+                user: req.body.username
+              },
+              secret
+            );
+
+            // make permanant to store??
+            res.cookie("accesscookie", token, {
+              sameSite: process.env.sameSite || "none",
+              secure: true,
+              maxAge: 60000,
+            });
+            res.send("correct");
+          } else {
+            res.send("wrong");
+          }
+        }
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
+
 
 app.get("/api/v1/register", (req, res) => {
   con_user_1.query(`SELECT 1`, (err, result) => {

@@ -2,29 +2,32 @@
     Banking Database and Systems management
 </div>
 
-<div class="auth" *ngIf="!isLoggedIn">
+<div class="auth" *ngIf="!isLoggedIn && !managerisLoggedIn">
     <app-auth></app-auth>
 </div>
 
 <div class="user" *ngIf="isLoggedIn">
     <p>
-    Welcome to BDSM Buddies
+        Welcome to BDSM Buddies
     </p>
 
     <button mat-raised-button (click)="goHome()" color="primary">
         Home
     </button>
+    <button mat-raised-button (click)="logout()" color="primary">
+        Logout
+    </button>
 
 
 
-    <br/>
+    <br />
     <br>
 
     <button mat-raised-button *ngIf="hasSavings && !displaySavings" (click)="loadSavings()" color="primary">
         <!-- <savings-acc></savings-acc> -->
         Savings Account
     </button>
-    
+
     <button mat-raised-button *ngIf="hasLoan && !displaySavings" (click)="loadSavings()" color="primary">
         Loan Account
     </button>
@@ -36,14 +39,16 @@
     <button mat-raised-button *ngIf="hasCurrent && !displaySavings" (click)="loadSavings()" color="primary">
         Current Account
     </button>
-    <button mat-raised-button (click)="logout()" color="primary">
-        Logout
-    </button>
+
 
     <app-saving-landing *ngIf="hasSavings && displaySavings"></app-saving-landing>
 
     <!-- <div class="SavingAccountLandingPage" *ngIf="hasSavings && displaySavings"> -->
-        
+
     <!-- </div> -->
+</div>
+
+<div class="manager" *ngIf="managerisLoggedIn">
+    <h1>Looks like manager login works</h1>
 
 </div>
