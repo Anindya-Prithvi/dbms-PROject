@@ -19,5 +19,7 @@
 	<p>Chosen value is {{fontStyleControl.value}}</p>
 </section>
       
-<app-saving-passbook-send-money-debit-card *ngIf="showDebitCardPayment" ></app-saving-passbook-send-money-debit-card>
+<div style="text-align: center; width: 100vw;">
+<app-saving-passbook-send-money-debit-card *ngIf="showDebitCardPayment"></app-saving-passbook-send-money-debit-card>
 <app-saving-passbook-send-money-credit-card *ngIf="showCreditCardPayment" ></app-saving-passbook-send-money-credit-card>
+</div>
