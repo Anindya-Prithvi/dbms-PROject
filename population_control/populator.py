@@ -400,7 +400,7 @@ class AccountCreator:
         principal = random.randint(amountDue, amountDue * 10)
         interestRate = 4 + round(random.random(), 2) * 10
         billingCycle = random.randint(1, 400)
-        epochdt = random.randint(1642222220, 1946222220)
+        epochdt = random.randint(int(time.time())+1000000, int(time.time())+3000000)
         dueDate = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
         customerId = accounttype[-1]
         serialNo = accounttype[0]
@@ -449,7 +449,7 @@ class AccountCreator:
         creditSpent = random.randint(1000, 100000)
         billingCycle = random.randint(1, 120)
         interestRate = 4 + round(random.random(), 2) * 10
-        epochdt = random.randint(1642222220, 1946222220)
+        epochdt = random.randint(int(time.time())+1000000, int(time.time())+3000000)
         dueDate = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
         customerId = accounttype[-1]
         serialNo = accounttype[0]
@@ -1083,3 +1083,7 @@ with open("data/tryjection.sql", "w") as f:
     f.write(Cheque.inject(cheques))
     f.write(ATM.inject(atms))
     f.write(Transaction.inject(txns))
+    with open("../SQL_scripts/balance_updation_trigger.sql","r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/insufficient_balance_trigger.sql","r") as g:
+        f.write(g.read())

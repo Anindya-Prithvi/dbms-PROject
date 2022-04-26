@@ -19,5 +19,5 @@ con_user_1.connect(function (err) {
 con_user_1.query(`USE ${DATABASE_NAME}`);
 
 const fullscript = fs.readFileSync('../population_control/data/tryjection.sql', { encoding: 'utf-8' });
-
+console.log('running fullscript');
 con_user_1.query(`${fullscript}`, (err, result) => { console.log(result) });
