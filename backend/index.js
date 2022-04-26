@@ -101,8 +101,12 @@ con_user_2.connect(function (err) {
   console.log("Connected with privilege 2!");
 });
 
-con_user_1.query(`USE ${DATABASE_NAME}`, (err, result) => { if (err) throw err; });
-con_user_2.query(`USE ${DATABASE_NAME}`, (err, result) => { if (err) throw err; });
+con_user_1.query(`USE ${DATABASE_NAME}`, (err, result) => {
+  if (err) throw err;
+});
+con_user_2.query(`USE ${DATABASE_NAME}`, (err, result) => {
+  if (err) throw err;
+});
 
 app.get("/api/v1/", (req, res) => {
   console.log(req.body); //works with POST
@@ -328,6 +332,7 @@ app.get("/api/v1/savingsTransaction", (req, res) => {
       WHERE savingsaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND savingsaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -365,6 +370,7 @@ app.get("/api/v1/currentTransaction", (req, res) => {
       WHERE currentaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND currentaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -402,6 +408,7 @@ app.get("/api/v1/loanTransaction", (req, res) => {
       WHERE loanaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND loanaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -439,6 +446,7 @@ app.get("/api/v1/creditTransaction", (req, res) => {
       WHERE creditcardaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND creditcardaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -539,6 +547,38 @@ app.post("/api/v1/validateDebitCard", (req, res) => {
       WHERE customers.username = '${username}' 
       AND savingsaccount.customerID = customers.pancard
       AND savingsaccount.accountNo = debitcard.savingsAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        let isCVVCorrect = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (req.body.cvv == result[0]["cvv"]) {
+            isCVVCorrect = true;
+          }
+        }
+        res.send(isCVVCorrect);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/api/v1/validateCreditCard", (req, res) => {
+  let username = req.username;
+  let toAccount = req.body.toAccount;
+  let toAccountType = req.body.toAccountType;
+  let amount = req.body.amount;
+  try {
+    // Validating debit card
+    con_user_1.query(
+      `SELECT cvv
+      FROM customers, creditcard, creditcardaccount 
+      WHERE customers.username = '${username}' 
+      AND creditcardaccount.customerID = customers.pancard
+      AND creditcardaccount.accountNo = creditcard.creditCardAccountNo
       ;`,
       (err, result) => {
         console.log(result);
