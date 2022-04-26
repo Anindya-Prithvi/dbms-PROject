@@ -27,7 +27,9 @@ function validateCookies(req, res, next) {
   console.log(`validation logger, request url: ${req.url}`);
   if (
     req.cookies.accesscookie == null &&
-    (req.url.match("/api/v[0-9]+/login") || req.url.match("/api/v[0-9]+/managerlogin") || !req.url.match("/api.*"))
+    (req.url.match("/api/v[0-9]+/login") ||
+      req.url.match("/api/v[0-9]+/managerlogin") ||
+      !req.url.match("/api.*"))
   ) {
     // console.log("Should issue cookie soon");
     next();
@@ -55,21 +57,18 @@ function injectInfofromJWT(req, res, next) {
     req.PAN = jwt.decode(jwtcookie)["pan"]; //note this will be undefined for manager tokens
   }
 
-  if (req.url === "/api/v1/logout" || req.url === "/api/v1/login" || req.url === "/api/v1/managerlogin") {
+  if (
+    req.url === "/api/v1/logout" ||
+    req.url === "/api/v1/login" ||
+    req.url === "/api/v1/managerlogin"
+  ) {
   } else {
     console.log(`reissuing cookie given url ${req.url}`);
-    res.cookie(
-      "accesscookie",
-      jwt.sign(
-        jwt.decode(jwtcookie),
-        secret
-      ),
-      {
-        sameSite: process.env.sameSite || "none",
-        secure: true,
-        maxAge: 60000,
-      }
-    );
+    res.cookie("accesscookie", jwt.sign(jwt.decode(jwtcookie), secret), {
+      sameSite: process.env.sameSite || "none",
+      secure: true,
+      maxAge: 60000,
+    });
   }
   // might inject PAN here
   next();
@@ -205,7 +204,7 @@ app.post("/api/v1/managerlogin", (req, res) => {
           if (givenPassHashed == foundHash) {
             let token = jwt.sign(
               {
-                user: req.body.username
+                user: req.body.username,
               },
               secret
             );
@@ -228,8 +227,6 @@ app.post("/api/v1/managerlogin", (req, res) => {
     res.status(404);
   }
 });
-
-
 
 app.get("/api/v1/register", (req, res) => {
   con_user_1.query(`SELECT 1`, (err, result) => {
@@ -458,6 +455,100 @@ SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId
           transactions = showTransactions(result);
         }
         res.send(transactions);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getCreditCardDetails", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `SELECT cardNo, expiryDate, customerName
+      FROM customers, creditcard, creditcardaccount 
+      WHERE customers.username = ${username} 
+      AND creditcardaccount.customerID = customers.pancard
+      AND creditcardaccount.accountNo = creditcard.creditcardAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        var creditCardDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          creditCardDetails.push(result[0]["cardNo"]);
+          creditCardDetails.push(result[0]["expiryDate"]);
+          creditCardDetails.push(result[0]["customerName"]);
+        }
+        res.send(creditCardDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getDebitCardDetails", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `SELECT cardNo, expiryDate, customerName
+      FROM customers, debitcard, savingsaccount 
+      WHERE customers.username = '${username}' 
+      AND savingsaccount.customerID = customers.pancard
+      AND savingsaccount.accountNo = debitcard.savingsAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        var debitCardDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          debitCardDetails.push(result[0]["cardNo"]);
+          debitCardDetails.push(result[0]["expiryDate"]);
+          debitCardDetails.push(result[0]["customerName"]);
+        }
+        res.send(debitCardDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/api/v1/validateDebitCard", (req, res) => {
+  let username = req.username;
+  let toAccount = req.body.toAccount;
+  let toAccountType = req.body.toAccountType;
+  let amount = req.body.amount;
+  try {
+    // Validating debit card
+    con_user_1.query(
+      `SELECT cvv
+      FROM customers, debitcard, savingsaccount 
+      WHERE customers.username = '${username}' 
+      AND savingsaccount.customerID = customers.pancard
+      AND savingsaccount.accountNo = debitcard.savingsAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        let isCVVCorrect = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (cvv == result[0]["cvv"]) {
+            isCVVCorrect = true;
+          }
+        }
+        res.send(isCVVCorrect);
       }
     );
   } catch (error) {
