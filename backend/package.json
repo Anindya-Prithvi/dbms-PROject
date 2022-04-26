@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo -n nothing"
+    "test": "echo -n nothing",
+    "populate_remote": "node populations.js"
   },
   "keywords": [
     "bank",
