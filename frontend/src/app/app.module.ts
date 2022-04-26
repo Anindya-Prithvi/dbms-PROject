@@ -22,6 +22,8 @@ import { CurrentSendMoneyComponent } from './current-send-money/current-send-mon
 import { CurrentSendMoneyDebitCardComponent } from './current-send-money-debit-card/current-send-money-debit-card.component';
 import { CreditLandingComponent } from './credit-landing/credit-landing.component';
 import { LoanLandingComponent } from './loan-landing/loan-landing.component';
+import { CreditPassbookComponent } from './credit-passbook/credit-passbook.component';
+import { CreditSendMoneyComponent } from './credit-send-money/credit-send-money.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { LoanLandingComponent } from './loan-landing/loan-landing.component';
     CurrentSendMoneyComponent,
     CurrentSendMoneyDebitCardComponent,
     CreditLandingComponent,
-    LoanLandingComponent
+    LoanLandingComponent,
+    CreditPassbookComponent,
+    CreditSendMoneyComponent
   ],
   imports: [
     BrowserModule,
