@@ -16,6 +16,10 @@ import { SavingPassbookComponent } from './saving-passbook/saving-passbook.compo
 import { SavingPassbookSendMoneyComponent } from './saving-passbook-send-money/saving-passbook-send-money.component';
 import { SavingPassbookSendMoneyDebitCardComponent } from './saving-passbook-send-money-debit-card/saving-passbook-send-money-debit-card.component';
 import { SavingPassbookSendMoneyCreditCardComponent } from './saving-passbook-send-money-credit-card/saving-passbook-send-money-credit-card.component';
+import { CurrentLandingComponent } from './current-landing/current-landing.component';
+import { CurrentPassbookComponent } from './current-passbook/current-passbook.component';
+import { CurrentSendMoneyComponent } from './current-send-money/current-send-money.component';
+import { CurrentSendMoneyDebitCardComponent } from './current-send-money-debit-card/current-send-money-debit-card.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +31,11 @@ import { SavingPassbookSendMoneyCreditCardComponent } from './saving-passbook-se
     SavingPassbookComponent,
     SavingPassbookSendMoneyComponent,
     SavingPassbookSendMoneyDebitCardComponent,
-    SavingPassbookSendMoneyCreditCardComponent
+    SavingPassbookSendMoneyCreditCardComponent,
+    CurrentLandingComponent,
+    CurrentPassbookComponent,
+    CurrentSendMoneyComponent,
+    CurrentSendMoneyDebitCardComponent
   ],
   imports: [
     BrowserModule,
