@@ -598,6 +598,134 @@ app.post("/api/v1/validateCreditCard", (req, res) => {
   }
 });
 
+app.get("/api/v1/hasSavings", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      
+      SELECT COUNT(*) as count
+      FROM customers, savingsaccount
+      WHERE customers.username = '${username}' AND savingsaccount.customerId = customers.pancard
+  ;`,
+      (err, result) => {
+        let hasSavings = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (result[0]["count"] > 0) {
+            hasSavings = true;
+          }
+        }
+
+        res.send(hasSavings);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
+app.get("/api/v1/hasLoan", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      
+      SELECT COUNT(*) as count
+      FROM customers, loanaccount
+      WHERE customers.username = '${username}' AND loanaccount.customerId = customers.pancard
+  ;`,
+      (err, result) => {
+        let hasLoan = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (result[0]["count"] > 0) {
+            hasLoan = true;
+          }
+        }
+
+        res.send(hasLoan);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
+app.get("/api/v1/hasCurrent", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      
+      SELECT COUNT(*) as count
+      FROM customers, currentaccount
+      WHERE customers.username = '${username}' AND currentaccount.customerId = customers.pancard
+  ;`,
+      (err, result) => {
+        let hasCurrent = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (result[0]["count"] > 0) {
+            hasCurrent = true;
+          }
+        }
+
+        res.send(hasCurrent);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
+app.get("/api/v1/hasCredit", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      
+      SELECT COUNT(*) as count
+      FROM customers, creditcardaccount
+      WHERE customers.username = '${username}' AND creditcardaccount.customerId = customers.pancard
+  ;`,
+      (err, result) => {
+        let hasCredit = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (result[0]["count"] > 0) {
+            hasCredit = true;
+          }
+        }
+
+        res.send(hasCredit);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
 app.post("/api/v1/sendMoney", (req, res) => {
   let username = req.username;
   try {
