@@ -16,8 +16,12 @@ export class AppComponent {
   hasCredit: boolean = true;
   hasCurrent: boolean = true;
 
+  displayAccountButtons = true;
+
   displaySavings: boolean = false;
   displayCurrent: boolean = false;
+  displayCredit: boolean = false;
+  displayLoan: boolean = false;
 
   // See something for cookie disabled people
   constructor() {
@@ -50,7 +54,10 @@ export class AppComponent {
     console.log("PAGALPAN")
     this.displaySavings = true;
     this.displayCurrent = false;
+    this.displayLoan = false;
+    this.displayCredit = false;
 
+    this.displayAccountButtons = false;
   }
 
   loadCurrent() {
@@ -58,11 +65,40 @@ export class AppComponent {
     console.log("PAGALPAN")
     this.displaySavings = false; 
     this.displayCurrent = true;
+    this.displayCredit = false;
+    this.displayLoan = false;
+
+    this.displayAccountButtons = false;
   }
 
+  loadCredit() {
+    console.log("Savings uhdwudheuhload kar");
+    console.log("PAGALPAN")
+    this.displaySavings = false; 
+    this.displayCurrent = false;
+    this.displayCredit = true;
+    this.displayLoan = false;
+
+    this.displayAccountButtons = false;
+  }
+
+  loadLoan() {
+    console.log("Savings uhdwudheuhload kar");
+    console.log("PAGALPAN")
+    this.displaySavings = false; 
+    this.displayCurrent = false;
+    this.displayCredit = false;
+    this.displayLoan = true;
+
+    this.displayAccountButtons = false;
+  }
   goHome() {
     this.displaySavings = false;
     this.displayCurrent = false;
+    this.displayCredit = false;
+    this.displayLoan = false;
+    
+    this.displayAccountButtons = true;
   }
 
   logout() {
