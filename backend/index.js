@@ -8,7 +8,7 @@ var cookieParser = require("cookie-parser");
 var express = require("express");
 const app = express();
 const port = 3000;
-const DATABASE_NAME = process.env.databasename || "BDSM";
+const DATABASE_NAME = process.env.databasename || "msdb_190422";
 
 process.env.staticdist ||
   app.use(
@@ -24,12 +24,14 @@ process.env.staticdist || app.use(express.static("dist"));
 
 const secret = process.env.secret || dotenv.config().parsed.secret;
 function validateCookies(req, res, next) {
-  console.log(req.url);
+  console.log(`validation logger, request url: ${req.url}`);
   if (
     req.cookies.accesscookie == null &&
-    (req.url.match("/api/v[0-9]+/login") || !req.url.match("/api.*"))
+    (req.url.match("/api/v[0-9]+/login") ||
+      req.url.match("/api/v[0-9]+/managerlogin") ||
+      !req.url.match("/api.*"))
   ) {
-    console.log("Issuing cookie cookie");
+    // console.log("Should issue cookie soon");
     next();
   } else if (
     req.cookies.accesscookie != null &&
@@ -49,30 +51,25 @@ app.use((err, req, res, next) => {
 
 function injectInfofromJWT(req, res, next) {
   let jwtcookie = req.cookies["accesscookie"];
+  // console.log(`injection cookie ${jwtcookie}`);
 
   if (jwtcookie != null) {
     req.username = jwt.decode(jwtcookie)["user"];
-    req.PAN = jwt.decode(jwtcookie)["pan"];
+    req.PAN = jwt.decode(jwtcookie)["pan"]; //note this will be undefined for manager tokens
   }
 
-  if (req.url === "/api/v1/logout" || req.url === "/api/v1/login") {
+  if (
+    req.url === "/api/v1/logout" ||
+    req.url === "/api/v1/login" ||
+    req.url === "/api/v1/managerlogin"
+  ) {
   } else {
-    console.log("reissuing cookie");
-    res.cookie(
-      "accesscookie",
-      jwt.sign(
-        {
-          user: req.username,
-          pan: req.PAN,
-        },
-        secret
-      ),
-      {
-        sameSite: process.env.sameSite || "none",
-        secure: true,
-        maxAge: 60000,
-      }
-    );
+    console.log(`reissuing cookie given url ${req.url}`);
+    res.cookie("accesscookie", jwt.sign(jwt.decode(jwtcookie), secret), {
+      sameSite: process.env.sameSite || "none",
+      secure: true,
+      maxAge: process.env.maxAge || 60000000,
+    });
   }
   // might inject PAN here
   next();
@@ -104,8 +101,12 @@ con_user_2.connect(function (err) {
   console.log("Connected with privilege 2!");
 });
 
-con_user_1.query(`USE ${DATABASE_NAME}`);
-con_user_2.query(`USE ${DATABASE_NAME}`);
+con_user_1.query(`USE ${DATABASE_NAME}`, (err, result) => {
+  if (err) throw err;
+});
+con_user_2.query(`USE ${DATABASE_NAME}`, (err, result) => {
+  if (err) throw err;
+});
 
 app.get("/api/v1/", (req, res) => {
   console.log(req.body); //works with POST
@@ -114,13 +115,14 @@ app.get("/api/v1/", (req, res) => {
 });
 
 app.get("/api/v1/login", (req, res) => {
-  if (req.cookies.accesscookie != null) res.send("true");
+  if (req.PAN != undefined && req.username != undefined) res.send("true");
   else res.send("false");
 });
 
 app.post("/api/v1/login", (req, res) => {
   let foundHash = "";
   let foundPAN = "";
+  //remember body is JSON not text
 
   try {
     con_user_1.query(
@@ -155,7 +157,7 @@ app.post("/api/v1/login", (req, res) => {
             res.cookie("accesscookie", token, {
               sameSite: process.env.sameSite || "none",
               secure: true,
-              maxAge: 60000,
+              maxAge: process.env.maxAge || 60000000,
             });
             res.send("correct");
           } else {
@@ -177,6 +179,59 @@ app.get("/api/v1/logout", (req, res) => {
     secure: true,
   });
   res.send("bye");
+});
+
+app.get("/api/v1/managerlogin", (req, res) => {
+  if (req.PAN === undefined && req.username != undefined) res.send("true");
+  else res.send("false");
+});
+// note user==empid, so req.username and user in jwt cookie shall stay consistent for managers
+app.post("/api/v1/managerlogin", (req, res) => {
+  let foundHash = "";
+  try {
+    con_user_1.query(
+      `
+        SELECT password_hash
+        FROM manager
+        WHERE empID='${req.body.username}';`,
+      (err, result) => {
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          foundHash = result[0]["password_hash"];
+        }
+        //send tokens here
+        // console.log(foundHash);
+        if (foundHash == "") res.send("");
+        else {
+          let givenPassHashed = createHash("sha256")
+            .update(req.body.password)
+            .digest("hex");
+          if (givenPassHashed == foundHash) {
+            let token = jwt.sign(
+              {
+                user: req.body.username,
+              },
+              secret
+            );
+
+            // make permanant to store??
+            res.cookie("accesscookie", token, {
+              sameSite: process.env.sameSite || "none",
+              secure: true,
+              maxAge: 60000,
+            });
+            res.send("correct");
+          } else {
+            res.send("wrong");
+          }
+        }
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
 });
 
 app.get("/api/v1/register", (req, res) => {
@@ -277,6 +332,7 @@ app.get("/api/v1/savingsTransaction", (req, res) => {
       WHERE savingsaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND savingsaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -314,6 +370,7 @@ app.get("/api/v1/currentTransaction", (req, res) => {
       WHERE currentaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND currentaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -351,6 +408,7 @@ app.get("/api/v1/loanTransaction", (req, res) => {
       WHERE loanaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND loanaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -388,6 +446,7 @@ app.get("/api/v1/creditTransaction", (req, res) => {
       WHERE creditcardaccount.customerId = customers.pancard 
       AND transaction.fromAcccustomerId = customers.pancard
       AND customers.username = '${username}'
+      AND creditcardaccount.serialNo = transaction.fromAccserialNo
 UNION
 SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId, chequeNo, debitCardNo,
       creditcardNo, ATMId, ATMCardNo 
@@ -406,6 +465,132 @@ SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId
           transactions = showTransactions(result);
         }
         res.send(transactions);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getCreditCardDetails", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `SELECT cardNo, expiryDate, customerName
+      FROM customers, creditcard, creditcardaccount 
+      WHERE customers.username = '${username}'
+      AND creditcardaccount.customerID = customers.pancard
+      AND creditcardaccount.accountNo = creditcard.creditcardAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        var creditCardDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          creditCardDetails.push(result[0]["cardNo"]);
+          creditCardDetails.push(result[0]["expiryDate"]);
+          creditCardDetails.push(result[0]["customerName"]);
+        }
+        res.send(creditCardDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getDebitCardDetails", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `SELECT cardNo, expiryDate, customerName
+      FROM customers, debitcard, savingsaccount 
+      WHERE customers.username = '${username}' 
+      AND savingsaccount.customerID = customers.pancard
+      AND savingsaccount.accountNo = debitcard.savingsAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        var debitCardDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          debitCardDetails.push(result[0]["cardNo"]);
+          debitCardDetails.push(result[0]["expiryDate"]);
+          debitCardDetails.push(result[0]["customerName"]);
+        }
+        res.send(debitCardDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/api/v1/validateDebitCard", (req, res) => {
+  let username = req.username;
+  let toAccount = req.body.toAccount;
+  let toAccountType = req.body.toAccountType;
+  let amount = req.body.amount;
+  try {
+    // Validating debit card
+    con_user_1.query(
+      `SELECT cvv
+      FROM customers, debitcard, savingsaccount 
+      WHERE customers.username = '${username}' 
+      AND savingsaccount.customerID = customers.pancard
+      AND savingsaccount.accountNo = debitcard.savingsAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        let isCVVCorrect = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (req.body.cvv == result[0]["cvv"]) {
+            isCVVCorrect = true;
+          }
+        }
+        res.send(isCVVCorrect);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/api/v1/validateCreditCard", (req, res) => {
+  let username = req.username;
+  let toAccount = req.body.toAccount;
+  let toAccountType = req.body.toAccountType;
+  let amount = req.body.amount;
+  try {
+    // Validating debit card
+    con_user_1.query(
+      `SELECT cvv
+      FROM customers, creditcard, creditcardaccount 
+      WHERE customers.username = '${username}' 
+      AND creditcardaccount.customerID = customers.pancard
+      AND creditcardaccount.accountNo = creditcard.creditCardAccountNo
+      ;`,
+      (err, result) => {
+        console.log(result);
+        let isCVVCorrect = false;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          if (req.body.cvv == result[0]["cvv"]) {
+            isCVVCorrect = true;
+          }
+        }
+        res.send(isCVVCorrect);
       }
     );
   } catch (error) {

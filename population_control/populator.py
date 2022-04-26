@@ -2,12 +2,11 @@
 
 import random, time, secrets, hashlib, string, datetime
 
-DATABASE_PROJECT_NAME = "BDSM"
+DATABASE_PROJECT_NAME = "msdb_190422"
 initstring = f"""UNLOCK TABLES;
 DROP DATABASE IF EXISTS {DATABASE_PROJECT_NAME};
 CREATE DATABASE {DATABASE_PROJECT_NAME};
 USE {DATABASE_PROJECT_NAME};
-
 """
 
 
@@ -245,25 +244,60 @@ class AccountType:
         sno = 15674
         delta = 0
         values = []
-        sav_creates = []  # to prevent multiple savings :trollblob:
 
         for n1, i in enumerate(customers):
-            for j in range(n):
-                while True:
-                    typeacc = secrets.choice(["SAV", "CUR", "LON", "CRD"])
-                    customer = i[0]
-                    if typeacc == "SAV" and customer in sav_creates:
-                        continue
-                    epochdt = random.randint(1284286794, 1646222220)
-                    timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
-                    break
-                bmt = secrets.choice(branchbyman)
-                delta += 1
-                values.append(
-                    (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
+            while True:
+                typeacc = "SAV"
+                customer = i[0]
+                epochdt = random.randint(1284286794, 1646222220)
+                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
                 )
+                break
+            bmt = secrets.choice(branchbyman)
+            delta += 1
+            values.append(
+                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
+            )
+            while True and random.random()>0.4:
+                typeacc = "CRD"
+                customer = i[0]
+                epochdt = random.randint(1284286794, 1646222220)
+                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+                break
+            bmt = secrets.choice(branchbyman)
+            delta += 1
+            values.append(
+                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
+            )
+            while True and random.random()>0.8:
+                typeacc = "CUR"
+                customer = i[0]
+                epochdt = random.randint(1284286794, 1646222220)
+                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+                break
+            bmt = secrets.choice(branchbyman)
+            delta += 1
+            values.append(
+                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
+            )
+            while True and random.random()>0.3:
+                typeacc = "LON"
+                customer = i[0]
+                epochdt = random.randint(1284286794, 1646222220)
+                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+                break
+            bmt = secrets.choice(branchbyman)
+            delta += 1
+            values.append(
+                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
+            )
         return values
 
     def inject(values):
@@ -813,7 +847,7 @@ class Transaction:
         savingsaccounts,
         loansaccounts,
         ccaccount,
-        n=5000,
+        n=100000,
     ):
         values = []
         for i in cheques:
