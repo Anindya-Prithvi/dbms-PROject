@@ -8,7 +8,7 @@ var cookieParser = require("cookie-parser");
 var express = require("express");
 const app = express();
 const port = 3000;
-const DATABASE_NAME = process.env.databasename || "BDSM";
+const DATABASE_NAME = process.env.databasename || "msdb_190422";
 
 process.env.staticdist ||
   app.use(
@@ -51,6 +51,7 @@ app.use((err, req, res, next) => {
 
 function injectInfofromJWT(req, res, next) {
   let jwtcookie = req.cookies["accesscookie"];
+  // console.log(`injection cookie ${jwtcookie}`);
 
   if (jwtcookie != null) {
     req.username = jwt.decode(jwtcookie)["user"];
@@ -67,7 +68,7 @@ function injectInfofromJWT(req, res, next) {
     res.cookie("accesscookie", jwt.sign(jwt.decode(jwtcookie), secret), {
       sameSite: process.env.sameSite || "none",
       secure: true,
-      maxAge: 60000,
+      maxAge: process.env.maxAge || 60000000,
     });
   }
   // might inject PAN here
@@ -100,8 +101,8 @@ con_user_2.connect(function (err) {
   console.log("Connected with privilege 2!");
 });
 
-con_user_1.query(`USE ${DATABASE_NAME}`);
-con_user_2.query(`USE ${DATABASE_NAME}`);
+con_user_1.query(`USE ${DATABASE_NAME}`, (err, result) => { if (err) throw err; });
+con_user_2.query(`USE ${DATABASE_NAME}`, (err, result) => { if (err) throw err; });
 
 app.get("/api/v1/", (req, res) => {
   console.log(req.body); //works with POST
@@ -117,6 +118,7 @@ app.get("/api/v1/login", (req, res) => {
 app.post("/api/v1/login", (req, res) => {
   let foundHash = "";
   let foundPAN = "";
+  //remember body is JSON not text
 
   try {
     con_user_1.query(
@@ -151,7 +153,7 @@ app.post("/api/v1/login", (req, res) => {
             res.cookie("accesscookie", token, {
               sameSite: process.env.sameSite || "none",
               secure: true,
-              maxAge: 60000,
+              maxAge: process.env.maxAge || 60000000,
             });
             res.send("correct");
           } else {
@@ -470,7 +472,7 @@ app.get("/api/v1/getCreditCardDetails", (req, res) => {
     con_user_1.query(
       `SELECT cardNo, expiryDate, customerName
       FROM customers, creditcard, creditcardaccount 
-      WHERE customers.username = ${username} 
+      WHERE customers.username = '${username}'
       AND creditcardaccount.customerID = customers.pancard
       AND creditcardaccount.accountNo = creditcard.creditcardAccountNo
       ;`,
@@ -544,7 +546,7 @@ app.post("/api/v1/validateDebitCard", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
-          if (cvv == result[0]["cvv"]) {
+          if (req.body.cvv == result[0]["cvv"]) {
             isCVVCorrect = true;
           }
         }
