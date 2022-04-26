@@ -1,0 +1,10 @@
+<p>credit-landing works!</p>
+<p>Credit Limit: {{creditLimit}}</p>
+<p>Credit Spent: {{creditSpent}}</p>
+<p>Amount Due: {{amountDue}}</p>
+<p></p>
+<button mat-raised-button (click)="showTransactions()">Passbook</button>
+<button mat-raised-button (click)="sendMoney()">Send Money</button>
+<p>Passbook:</p>
+<app-credit-passbook *ngIf="showPassbook"></app-credit-passbook>
+<app-credit-send-money *ngIf="showSendMoney"></app-credit-send-money>

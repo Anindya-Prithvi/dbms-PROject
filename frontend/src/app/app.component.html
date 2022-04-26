@@ -23,26 +23,28 @@
     <br />
     <br>
 
-    <button mat-raised-button *ngIf="hasSavings && !displaySavings" (click)="loadSavings()" color="primary">
+    <button mat-raised-button *ngIf="hasSavings && displayAccountButtons" (click)="loadSavings()" color="primary">
         <!-- <savings-acc></savings-acc> -->
         Savings Account
     </button>
 
-    <button mat-raised-button *ngIf="hasLoan && !displaySavings" (click)="loadSavings()" color="primary">
+    <button mat-raised-button *ngIf="hasLoan && displayAccountButtons" (click)="loadLoan()" color="primary">
         Loan Account
     </button>
 
-    <button mat-raised-button *ngIf="hasCredit && !displaySavings" (click)="loadSavings()" color="primary">
+    <button mat-raised-button *ngIf="hasCredit && displayAccountButtons " (click)="loadCredit()" color="primary">
         Credit Account
     </button>
 
-    <button mat-raised-button *ngIf="hasCurrent && !displaySavings" (click)="loadSavings()" color="primary">
+    <button mat-raised-button *ngIf="hasCurrent && displayAccountButtons" (click)="loadCurrent()" color="primary">
         Current Account
     </button>
 
 
     <app-saving-landing *ngIf="hasSavings && displaySavings"></app-saving-landing>
-
+    <app-current-landing *ngIf="hasCurrent && displayCurrent"></app-current-landing>
+    <app-credit-landing *ngIf="hasCredit && displayCredit"></app-credit-landing>
+    <app-loan-landing *ngIf="hasLoan && displayLoan"></app-loan-landing>
     <!-- <div class="SavingAccountLandingPage" *ngIf="hasSavings && displaySavings"> -->
 
     <!-- </div> -->
