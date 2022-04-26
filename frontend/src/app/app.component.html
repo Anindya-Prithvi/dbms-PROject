@@ -36,13 +36,13 @@
         Credit Account
     </button>
 
-    <button mat-raised-button *ngIf="hasCurrent && !displaySavings" (click)="loadSavings()" color="primary">
+    <button mat-raised-button *ngIf="hasCurrent && !displaySavings" (click)="loadCurrent()" color="primary">
         Current Account
     </button>
 
 
     <app-saving-landing *ngIf="hasSavings && displaySavings"></app-saving-landing>
-
+    <app-current-landing *ngIf="hasCurrent && displayCurrent"></app-current-landing>
     <!-- <div class="SavingAccountLandingPage" *ngIf="hasSavings && displaySavings"> -->
 
     <!-- </div> -->

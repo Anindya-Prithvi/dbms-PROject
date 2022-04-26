@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { flushMicrotasks } from '@angular/core/testing';
 import { axios } from 'src/utilities/axios';
 
 @Component({
@@ -16,7 +17,7 @@ export class AppComponent {
   hasCurrent: boolean = true;
 
   displaySavings: boolean = false;
-
+  displayCurrent: boolean = false;
 
   // See something for cookie disabled people
   constructor() {
@@ -48,11 +49,20 @@ export class AppComponent {
     console.log("Savings uhdwudheuhload kar");
     console.log("PAGALPAN")
     this.displaySavings = true;
+    this.displayCurrent = false;
 
+  }
+
+  loadCurrent() {
+    console.log("Savings uhdwudheuhload kar");
+    console.log("PAGALPAN")
+    this.displaySavings = false; 
+    this.displayCurrent = true;
   }
 
   goHome() {
     this.displaySavings = false;
+    this.displayCurrent = false;
   }
 
   logout() {
