@@ -764,11 +764,39 @@ app.get("/api/v1/hasCredit", (req, res) => {
   }
 });
 
+app.get("/api/v1/currentBalance", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      SELECT balance from currentaccount, customers where customers.username = "${username}" 
+      AND customers.pancard = currentaccount.customerId;`,
+      (err, result) => {
+        let balance = 0;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          balance = result[0]["balance"];
+          console.log("INNER: " + balance);
+        }
+
+        res.send(balance.toString());
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+  console.log("ASDASD" + customerId);
+});
+
 app.post("/api/v1/sendMoney", (req, res) => {
   let username = req.username;
   try {
     // Insert values for transactions
-    
   } catch (error) {
     console.log(error);
   }
