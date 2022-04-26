@@ -63,11 +63,11 @@ class Customer:
         with open("data/PRnames") as f:
             names = f.read().split()
         with open("data/CityNames") as f:
-            cities = f.read().split('\n')
+            cities = f.read().split("\n")
         with open("data/CountryNames") as f:
-            countries = f.read().split('\n')
+            countries = f.read().split("\n")
         with open("data/StateNames") as f:
-            states = f.read().split('\n')
+            states = f.read().split("\n")
         PANnumbers = set()
         for _ in range(n):
             PANnumbers.add(
@@ -76,7 +76,7 @@ class Customer:
                 + random.choice(string.ascii_uppercase)
             )
         for pan in PANnumbers:
-            #print(f"Adding user for pan: {pan}")
+            # print(f"Adding user for pan: {pan}")
             creditScore: int = random.randint(1, 100)
             customerName: str = Customer.get_name(names)
             values.append(
@@ -145,7 +145,9 @@ class Manager:
                 with open("data/LoginDumpManager", "a") as f:
                     f.write(f"{empIds[i]} {password}")
             except:
-                print(f"Manager level write fail user/empid: {empIds[i]}, password {password}")
+                print(
+                    f"Manager level write fail user/empid: {empIds[i]}, password {password}"
+                )
             values.append(
                 (
                     empIds[i],
@@ -200,11 +202,11 @@ class Branch:
 
     def make_address():
         with open("data/CityNames", "r") as f:
-            cities = f.read().split('\n')
+            cities = f.read().split("\n")
         with open("data/CountryNames", "r") as f:
-            countries = f.read().split('\n')
+            countries = f.read().split("\n")
         with open("data/StateNames", "r") as f:
-            state = f.read().split('\n')
+            state = f.read().split("\n")
         """Ship cities as locality for now, we just have to populate"""
         return (
             random.choice(cities),
@@ -256,10 +258,8 @@ class AccountType:
                 break
             bmt = secrets.choice(branchbyman)
             delta += 1
-            values.append(
-                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
-            )
-            while True and random.random()>0.4:
+            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+            while True and random.random() > 0.4:
                 typeacc = "CRD"
                 customer = i[0]
                 epochdt = random.randint(1284286794, 1646222220)
@@ -269,10 +269,8 @@ class AccountType:
                 break
             bmt = secrets.choice(branchbyman)
             delta += 1
-            values.append(
-                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
-            )
-            while True and random.random()>0.8:
+            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+            while True and random.random() > 0.8:
                 typeacc = "CUR"
                 customer = i[0]
                 epochdt = random.randint(1284286794, 1646222220)
@@ -282,10 +280,8 @@ class AccountType:
                 break
             bmt = secrets.choice(branchbyman)
             delta += 1
-            values.append(
-                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
-            )
-            while True and random.random()>0.3:
+            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+            while True and random.random() > 0.3:
                 typeacc = "LON"
                 customer = i[0]
                 epochdt = random.randint(1284286794, 1646222220)
@@ -295,9 +291,7 @@ class AccountType:
                 break
             bmt = secrets.choice(branchbyman)
             delta += 1
-            values.append(
-                (sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer)
-            )
+            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
         return values
 
     def inject(values):
@@ -400,7 +394,7 @@ class AccountCreator:
         principal = random.randint(amountDue, amountDue * 10)
         interestRate = 4 + round(random.random(), 2) * 10
         billingCycle = random.randint(1, 400)
-        epochdt = random.randint(int(time.time())+1000000, int(time.time())+3000000)
+        epochdt = random.randint(int(time.time()) + 1000000, int(time.time()) + 3000000)
         dueDate = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
         customerId = accounttype[-1]
         serialNo = accounttype[0]
@@ -449,7 +443,7 @@ class AccountCreator:
         creditSpent = random.randint(1000, 100000)
         billingCycle = random.randint(1, 120)
         interestRate = 4 + round(random.random(), 2) * 10
-        epochdt = random.randint(int(time.time())+1000000, int(time.time())+3000000)
+        epochdt = random.randint(int(time.time()) + 1000000, int(time.time()) + 3000000)
         dueDate = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
         customerId = accounttype[-1]
         serialNo = accounttype[0]
@@ -868,30 +862,30 @@ class Transaction:
             toacc = i[2]
             # totype = "'SAV'" if i[4] != "null" else "'CUR'"
             for temp in savingsaccounts:
-                if temp[0]==i[2]: 
-                    totype="'SAV'"
+                if temp[0] == i[2]:
+                    totype = "'SAV'"
                     fromcustpan = temp[-1]
                     fromcustserno = temp[-2]
-            for temp in currentaccounts: 
-                if temp[0]==i[2]: 
-                    totype="'CUR'"
+            for temp in currentaccounts:
+                if temp[0] == i[2]:
+                    totype = "'CUR'"
                     fromcustpan = temp[-1]
                     fromcustserno = temp[-2]
-            for temp in loansaccounts: 
-                if temp[0]==i[2]: 
-                    totype="'LON'"
+            for temp in loansaccounts:
+                if temp[0] == i[2]:
+                    totype = "'LON'"
                     fromcustpan = temp[-1]
                     fromcustserno = temp[-2]
-            for temp in ccaccount: 
-                if temp[0]==i[2]: 
-                    totype="'CRD'"
+            for temp in ccaccount:
+                if temp[0] == i[2]:
+                    totype = "'CRD'"
                     fromcustpan = temp[-1]
                     fromcustserno = temp[-2]
             modeOfPayment = "'ONL'"
             amount = i[3]
             chequeno = i[0]
             dcno = ccno = atmid = atmcardno = "null"
-            
+
             values.append(
                 (
                     txnId,
@@ -909,8 +903,8 @@ class Transaction:
                     "'" + fromcustpan + "'",
                 )
             )
-        
-        #now we shall generate arbitrary transactions from savings accs
+
+        # now we shall generate arbitrary transactions from savings accs
         for i in range(n):
             # txnid,toacc,totype
             # modeofpayment,amount
@@ -921,13 +915,13 @@ class Transaction:
             txnId = int(
                 str(
                     int(
-                        hashlib.shake_128(bytes(str(i)+"ad", "utf-8")).hexdigest(7),
+                        hashlib.shake_128(bytes(str(i) + "ad", "utf-8")).hexdigest(7),
                         16,
                     )
                 ).zfill(18)[::-1]
             )
-            toacctype = secrets.choice([0,1,2,3]) 
-            encodes = ["'CUR'","'SAV'","'LON'", "'CRD'"]
+            toacctype = secrets.choice([0, 1, 2, 3])
+            encodes = ["'CUR'", "'SAV'", "'LON'", "'CRD'"]
             totype = encodes[toacctype]
             if totype == "'SAV'":
                 toacc = secrets.choice(savingsaccounts)
@@ -938,14 +932,14 @@ class Transaction:
             elif totype == "'CRD'":
                 toacc = secrets.choice(ccaccount)
             modeOfPayment = "'ONL'"
-            amount = random.randint(100,900000)*10
-            timestamp = datetime.datetime.fromtimestamp(random.randint(1284286794, 1646222220)).strftime(
-                        "'%Y-%m-%d %H:%M:%S'"
-                    )
-            chequeno=dcno=ccno=atmid=atmcardno="null"
-                
-            fromacctype = secrets.choice([0,1,2])
-            fromenc = ["'SAV'","'CUR'","'CRD'"]
+            amount = random.randint(100, 900000) * 10
+            timestamp = datetime.datetime.fromtimestamp(
+                random.randint(1284286794, 1646222220)
+            ).strftime("'%Y-%m-%d %H:%M:%S'")
+            chequeno = dcno = ccno = atmid = atmcardno = "null"
+
+            fromacctype = secrets.choice([0, 1, 2])
+            fromenc = ["'SAV'", "'CUR'", "'CRD'"]
             fromtype = fromenc[fromacctype]
 
             if fromtype == "'SAV'":
@@ -955,38 +949,39 @@ class Transaction:
             elif fromtype == "'CRD'":
                 fromacc = secrets.choice(ccaccount)
 
-            if random.random()>0.6:
-                if fromtype=="'SAV'":
+            if random.random() > 0.6:
+                if fromtype == "'SAV'":
                     for debitcard in debitcards:
-                        if debitcard[-1]==fromacc[0]:
+                        if debitcard[-1] == fromacc[0]:
                             dcno = debitcard[0]
-                    if random.random()>0.4:
+                    if random.random() > 0.4:
                         toacc = "null"
                         totype = "null"
                         modeOfPayment = "'OFF'"
                         atmid = random.choice(atms)[0]
                         atmcardno = dcno
-                elif fromtype=="'CRD'":
+                elif fromtype == "'CRD'":
                     for creditcard in creditcards:
-                        if creditcard[-1]==fromacc[0]:
+                        if creditcard[-1] == fromacc[0]:
                             ccno = creditcard[0]
-                
 
-            values.append((
-                txnId,
-                toacc[0] if toacc!="null" else toacc,
-                totype,
-                modeOfPayment,
-                amount,
-                timestamp,
-                chequeno,
-                dcno,
-                ccno,
-                atmid,
-                atmcardno,
-                fromacc[-2],
-                "'"+fromacc[-1]+"'",
-            ))
+            values.append(
+                (
+                    txnId,
+                    toacc[0] if toacc != "null" else toacc,
+                    totype,
+                    modeOfPayment,
+                    amount,
+                    timestamp,
+                    chequeno,
+                    dcno,
+                    ccno,
+                    atmid,
+                    atmcardno,
+                    fromacc[-2],
+                    "'" + fromacc[-1] + "'",
+                )
+            )
 
         return values
 
@@ -1083,7 +1078,9 @@ with open("data/tryjection.sql", "w") as f:
     f.write(Cheque.inject(cheques))
     f.write(ATM.inject(atms))
     f.write(Transaction.inject(txns))
-    with open("../SQL_scripts/balance_updation_trigger.sql","r") as g:
+    with open("../SQL_scripts/balance_updation_trigger.sql", "r") as g:
         f.write(g.read())
-    with open("../SQL_scripts/insufficient_balance_trigger.sql","r") as g:
+    with open("../SQL_scripts/insufficient_balance_trigger.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/customerinfo_view_manager_grant.sql", "r") as g:
         f.write(g.read())
