@@ -793,6 +793,65 @@ app.get("/api/v1/currentBalance", (req, res) => {
   console.log("ASDASD" + customerId);
 });
 
+app.get("/api/v1/getCreditLimit", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      SELECT creditlimit from creditcardaccount, customers where customers.username = "${username}" 
+AND customers.pancard = creditcardaccount.customerId;`,
+      (err, result) => {
+        let creditlimit = 0;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          creditlimit = result[0]["creditlimit"];
+          console.log("INNER: " + creditlimit);
+        }
+
+        res.send(creditlimit.toString());
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+  console.log("ASDASD" + customerId);
+});
+
+app.get("/api/v1/getCreditSpent", (req, res) => {
+  let username = req.username;
+  console.log(username);
+  var customerId;
+
+  try {
+    con_user_1.query(
+      `
+      SELECT creditSpent from creditcardaccount, customers where customers.username = "${username}" 
+AND customers.pancard = creditcardaccount.customerId;`,
+      (err, result) => {
+        console.log(result);
+        let creditspent = 0;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          creditspent = result[0]["creditSpent"];
+          console.log("INNER: " + creditspent);
+        }
+
+        res.send(creditspent.toString());
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+  console.log("ASDASD" + customerId);
+});
+
 app.post("/api/v1/sendMoney", (req, res) => {
   let username = req.username;
   try {

@@ -24,6 +24,7 @@ import { CreditLandingComponent } from './credit-landing/credit-landing.componen
 import { LoanLandingComponent } from './loan-landing/loan-landing.component';
 import { CreditPassbookComponent } from './credit-passbook/credit-passbook.component';
 import { CreditSendMoneyComponent } from './credit-send-money/credit-send-money.component';
+import { LoanPassbookComponent } from './loan-passbook/loan-passbook.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { CreditSendMoneyComponent } from './credit-send-money/credit-send-money.
     CreditLandingComponent,
     LoanLandingComponent,
     CreditPassbookComponent,
-    CreditSendMoneyComponent
+    CreditSendMoneyComponent,
+    LoanPassbookComponent
   ],
   imports: [
     BrowserModule,
