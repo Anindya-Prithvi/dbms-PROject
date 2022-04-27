@@ -551,7 +551,10 @@ app.post("/api/v1/paymentThroughDebitCard", (req, res) => {
         let isCVVCorrect = false;
         let cardNo = result[0]["cardNo"];
         let serialNo = result[0]["serialNo"];
-        if (err) { res.send(err.message); throw err; }
+        if (err) {
+          res.send(err.message);
+          throw err;
+        }
         if (result["length"] == 0) {
         } else {
           if (parseInt(req.body.cvv) == result[0]["cvv"]) {
@@ -1026,8 +1029,7 @@ app.post("/api/v1/SavingsACtransfer", (req, res) => {
             if (err) {
               res.send(err.message);
               throw err;
-            }
-            else {
+            } else {
               if (result["length"] == 0) {
                 console.log("This shall never happen lol");
               } else {
@@ -1071,8 +1073,7 @@ app.post("/api/v1/CurrentACtransfer", (req, res) => {
             if (err) {
               res.send(err.message);
               throw err;
-            }
-            else {
+            } else {
               if (result["length"] == 0) {
                 console.log("This shall never happen lol");
               } else {
@@ -1116,8 +1117,7 @@ app.post("/api/v1/CreditACtransfer", (req, res) => {
             if (err) {
               res.send(err.message);
               throw err;
-            }
-            else {
+            } else {
               if (result["length"] == 0) {
                 console.log("This shall never happen lol");
               } else {
@@ -1274,6 +1274,74 @@ app.get("/api/v1/allCreditCardAccountTransactionsForManager", (req, res) => {
     );
   } catch (error) {
     console.log(error);
+  }
+});
+
+app.get("/api/v1/orderSavingsByBalance", (req, res) => {
+  try {
+    con_user_2.query(
+      `
+      select accountNo, customerId, balance,
+dense_rank () over (order by balance desc)
+as max_balance_rank 
+from savingsaccount
+order by max_balance_rank limit 100;`,
+      (err, result) => {
+        console.log(result);
+        let detailsOfAccounts = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          for (let i = 0; i < result["length"]; i++) {
+            let acc = [];
+            acc.push(result[i]["accountNo"].toString());
+            acc.push(result[i]["customerId"].toString());
+            acc.push(result[i]["balance"].toString());
+            acc.push(result[i]["max_balance_rank"].toString());
+            detailsOfAccounts.push(acc);
+          }
+        }
+
+        res.send(detailsOfAccounts);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
+app.get("/api/v1/orderLoanByAmountDue", (req, res) => {
+  try {
+    con_user_2.query(
+      `
+      select accountNo, customerId, amountDue,
+dense_rank () over (order by amountDue desc)
+as max_amount_due
+from loanaccount
+order by max_amount_due limit 100;`,
+      (err, result) => {
+        console.log(result);
+        let detailsOfAccounts = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          for (let i = 0; i < result["length"]; i++) {
+            let acc = [];
+            acc.push(result[i]["accountNo"].toString());
+            acc.push(result[i]["customerId"].toString());
+            acc.push(result[i]["amountDue"].toString());
+            acc.push(result[i]["max_amount_due"].toString());
+            detailsOfAccounts.push(acc);
+          }
+        }
+
+        res.send(detailsOfAccounts);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
   }
 });
 
