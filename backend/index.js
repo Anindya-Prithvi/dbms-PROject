@@ -1347,4 +1347,30 @@ order by max_amount_due limit 100;`,
   }
 });
 
+app.get("/api/v1/getCreditAmountDue", (req, res) => {
+  let username = req.username;
+  console.log(username);
+
+  try {
+    con_user_1.query(
+      `
+      SELECT amountDue from creditcardaccount, customers where customers.username = "${username}" 
+AND customers.pancard = creditcardaccount.customerId;`,
+      (err, result) => {
+        let amountDue = 0;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          amountDue = result[0]["amountDue"];
+        }
+
+        res.send(amountDue.toString());
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
 app.listen(process.env.PORT || port);
