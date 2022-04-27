@@ -49,7 +49,7 @@ export class SavingTransactionsViewComponent implements OnInit {
     let transactionsDump!: string[][];
     axios.get("/api/v1/savingsTransaction").then(response => {
       console.log(response.headers);
-      // console.log("OYE TRANSACTIONS: " + response.data);
+      console.log("OYE TRANSACTIONS: " + response.data);
       // transactionsDump.push(response.data as string[][]);
       // console.log(response.data);
 
@@ -60,8 +60,6 @@ export class SavingTransactionsViewComponent implements OnInit {
       // time: string;
       // toAccount: string;
       // fromAccount: string;
-      // type: string;
-      // cardNo: string;
       // creditDebit: string;
 
       transactionsDump = response.data;
@@ -75,9 +73,7 @@ export class SavingTransactionsViewComponent implements OnInit {
           time: element[3],
           toAccount: element[4],
           fromAccount: element[5],
-          type: element[6],
-          cardNo: element[7],
-          creditDebit: element[8]
+          creditDebit: element[6]
         });
         // TRANSACTION_DATA =  TRANSACTION_DATA.slice(1, );
         this.dataSource.data = TRANSACTION_DATA;
@@ -105,8 +101,6 @@ export interface Transaction {
   time: string;
   toAccount: string;
   fromAccount: string;
-  type: string;
-  cardNo: string;
   creditDebit: string;
 }
 
@@ -119,8 +113,6 @@ let TRANSACTION_DATA: Transaction[] = [
     time: "",
     toAccount: "",
     fromAccount: "",
-    type: "",
-    cardNo: "",
     creditDebit: "",
   },
 ];
