@@ -551,7 +551,7 @@ app.post("/api/v1/paymentThroughDebitCard", (req, res) => {
         let isCVVCorrect = false;
         let cardNo = result[0]["cardNo"];
         let serialNo = result[0]["serialNo"];
-        if (err) throw err;
+        if (err) { res.send(err.message); throw err; }
         if (result["length"] == 0) {
         } else {
           if (parseInt(req.body.cvv) == result[0]["cvv"]) {
@@ -568,7 +568,10 @@ app.post("/api/v1/paymentThroughDebitCard", (req, res) => {
             (err, result) => {
               console.log(result);
 
-              if (err) throw err;
+              if (err) {
+                res.send(err.message);
+                throw err;
+              }
               if (result["length"] == 0) {
               } else {
               }
@@ -605,7 +608,10 @@ app.post("/api/v1/paymentThroughCreditCard", (req, res) => {
         let isCVVCorrect = false;
         let cardNo = result[0]["cardNo"];
         let serialNo = result[0]["serialNo"];
-        if (err) throw err;
+        if (err) {
+          res.send(err.message);
+          throw err;
+        }
         if (result["length"] == 0) {
         } else {
           if (req.body.cvv == result[0]["cvv"]) {
@@ -623,7 +629,10 @@ app.post("/api/v1/paymentThroughCreditCard", (req, res) => {
             (err, result) => {
               console.log(result);
 
-              if (err) throw err;
+              if (err) {
+                res.send(err.message);
+                throw err;
+              }
               if (result["length"] == 0) {
               } else {
               }
@@ -1014,7 +1023,10 @@ app.post("/api/v1/SavingsACtransfer", (req, res) => {
         con_user_1.query(
           `INSERT INTO transaction VALUES(${txnId}, ${toAccNo}, '${toAccType}', "ONL", ${amount}, '${timestamp}', null, null, null, null, null, ${serialNo}, '${PANCard}');`,
           (err, result) => {
-            if (err) res.send(err);
+            if (err) {
+              res.send(err.message);
+              throw err;
+            }
             else {
               if (result["length"] == 0) {
                 console.log("This shall never happen lol");
@@ -1056,7 +1068,10 @@ app.post("/api/v1/CurrentACtransfer", (req, res) => {
         con_user_1.query(
           `INSERT INTO transaction VALUES(${txnId}, ${toAccNo}, '${toAccType}', "ONL", ${amount}, '${timestamp}', null, null, null, null, null, ${serialNo}, '${PANCard}');`,
           (err, result) => {
-            if (err) res.send(err);
+            if (err) {
+              res.send(err.message);
+              throw err;
+            }
             else {
               if (result["length"] == 0) {
                 console.log("This shall never happen lol");
@@ -1098,7 +1113,10 @@ app.post("/api/v1/CreditACtransfer", (req, res) => {
         con_user_1.query(
           `INSERT INTO transaction VALUES(${txnId}, ${toAccNo}, '${toAccType}', "ONL", ${amount}, '${timestamp}', null, null, null, null, null, ${serialNo}, '${PANCard}');`,
           (err, result) => {
-            if (err) res.send(err);
+            if (err) {
+              res.send(err.message);
+              throw err;
+            }
             else {
               if (result["length"] == 0) {
                 console.log("This shall never happen lol");
