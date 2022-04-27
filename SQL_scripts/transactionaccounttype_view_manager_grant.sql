@@ -1,4 +1,3 @@
-use msdb_190422;
 drop view if exists allsavingsaccounttransactions;
 drop view if exists allloanaccounttransactions;
 drop view if exists allcreditcardaccounttransactions;
