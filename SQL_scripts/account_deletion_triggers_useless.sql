@@ -1,5 +1,3 @@
-USE bdsm;
-
 CREATE TRIGGER after_savings_delete AFTER DELETE
 ON savingsaccount
 FOR EACH ROW
@@ -16,6 +14,6 @@ FOR EACH ROW
 DELETE FROM accounttype WHERE old.serialNo = accountype.serialNo AND old.customerId = accounttype.customer_id;
 
 CREATE TRIGGER after_loan_delete AFTER DELETE
-ON loanaccoloanaccountunt
+ON loanaccount
 FOR EACH ROW
 DELETE FROM accounttype WHERE old.serialNo = accountype.serialNo AND old.customerId = accounttype.customer_id;
