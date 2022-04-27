@@ -25,6 +25,10 @@ import { LoanLandingComponent } from './loan-landing/loan-landing.component';
 import { CreditPassbookComponent } from './credit-passbook/credit-passbook.component';
 import { CreditSendMoneyComponent } from './credit-send-money/credit-send-money.component';
 import { LoanPassbookComponent } from './loan-passbook/loan-passbook.component';
+import { SavingTransactionsViewComponent } from './saving-transactions-view/saving-transactions-view.component';
+import { CreditTransactionsViewComponent } from './credit-transactions-view/credit-transactions-view.component';
+import { CurrentTransactionsViewComponent } from './current-transactions-view/current-transactions-view.component';
+import { LoanTransactionsViewComponent } from './loan-transactions-view/loan-transactions-view.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +49,11 @@ import { LoanPassbookComponent } from './loan-passbook/loan-passbook.component';
     LoanLandingComponent,
     CreditPassbookComponent,
     CreditSendMoneyComponent,
-    LoanPassbookComponent
+    LoanPassbookComponent,
+    SavingTransactionsViewComponent,
+    CreditTransactionsViewComponent,
+    CurrentTransactionsViewComponent,
+    LoanTransactionsViewComponent
   ],
   imports: [
     BrowserModule,
