@@ -611,7 +611,7 @@ class CreditCard:
             except:
                 print(f"{cardNo} {cvv} {str(pin).zfill(4)}")
             ccan = i[0]
-            epochdt = random.randint(1342222220, 1946222220)
+            epochdt = random.randint(int(time.time()) + 10000000, int(time.time()) + 100000000)
             expiryDate = datetime.datetime.fromtimestamp(epochdt).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
@@ -665,7 +665,7 @@ class DebitCard:
             except:
                 print(f"{cardNo} {cvv} {str(pin).zfill(4)}")
             dcan = i[0]
-            epochdt = random.randint(1342222220, 1946222220)
+            epochdt = random.randint(int(time.time()) + 10000000, int(time.time()) + 100000000)
             expiryDate = datetime.datetime.fromtimestamp(epochdt).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
@@ -1083,4 +1083,14 @@ with open("data/tryjection.sql", "w") as f:
     with open("../SQL_scripts/insufficient_balance_trigger.sql", "r") as g:
         f.write(g.read())
     with open("../SQL_scripts/customerinfo_view_manager_grant.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/accountCreationTriggers.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/index.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/transactionaccounttype_view_manager_grant.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/account_deletion_triggers_useless.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/branchinfo_view_customer_grant.sql", "r") as g:
         f.write(g.read())
