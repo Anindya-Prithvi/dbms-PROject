@@ -475,7 +475,7 @@ app.get("/api/v1/getCreditCardDetails", (req, res) => {
   try {
     // From credit card account transactions
     con_user_1.query(
-      `SELECT cardNo, expiryDate, customerName
+      `SELECT cardNo, expiryDate, customerName, CVV
       FROM customers, creditcard, creditcardaccount 
       WHERE customers.username = '${username}'
       AND creditcardaccount.customerID = customers.pancard
@@ -487,6 +487,7 @@ app.get("/api/v1/getCreditCardDetails", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
+            console.log("CVV: " + result[0]["CVV"]);
           console.log(result["length"]);
           creditCardDetails.push(result[0]["cardNo"]);
           creditCardDetails.push(result[0]["expiryDate"]);
@@ -506,7 +507,7 @@ app.get("/api/v1/getDebitCardDetails", (req, res) => {
   try {
     // From credit card account transactions
     con_user_1.query(
-      `SELECT cardNo, expiryDate, customerName
+      `SELECT cardNo, expiryDate, customerName, CVV
       FROM customers, debitcard, savingsaccount 
       WHERE customers.username = '${username}' 
       AND savingsaccount.customerID = customers.pancard
@@ -518,6 +519,7 @@ app.get("/api/v1/getDebitCardDetails", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
+            console.log("CVV :" + result[0]["CVV"])
           console.log(result["length"]);
           debitCardDetails.push(result[0]["cardNo"]);
           debitCardDetails.push(result[0]["expiryDate"]);
