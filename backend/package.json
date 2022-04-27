@@ -14,7 +14,7 @@
     "database",
     "dbms"
   ],
-  "author": "Anindya Prithvi, et.al.",
+  "author": "Anindya Prithvi, Vibhu Dubey, et.al.",
   "license": "GPL-3.0",
   "dependencies": {
     "cookie-parser": "^1.4.6",
