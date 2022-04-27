@@ -1,13 +1,2 @@
 <!-- <script src="https://www.desmos.com/api/v1.7/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script> -->
 <div id="calculator" style="width: 600px; height: 400px;"></div>
-<script>
-    var elt = document.getElementById('calculator');
-    var calculator = Desmos.GraphingCalculator(elt);
-    calculator.setExpression({ id: 'count vs epoch', latex: '([11111111,1000000],[-1000,1000])' });
-    calculator.setMathBounds({
-        left: -10000000000,
-        right: 10000000000,
-        bottom: -10000000,
-        top: 10000000
-    });
-</script>
