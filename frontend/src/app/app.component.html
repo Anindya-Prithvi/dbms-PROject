@@ -50,9 +50,50 @@
     <!-- </div> -->
 </div>
 
+
+
+
+
+
+
+
+
+
 <div class="manager" *ngIf="managerisLoggedIn">
     Only thing that works so far lol
+    <button mat-raised-button (click)="goHome()" color="primary">
+        Home
+    </button>
     <button mat-raised-button (click)="logout()" color="primary">
         Logout
     </button>
+
+    <br>
+
+    <p>View Tables:</p>
+
+   
+    <button mat-raised-button *ngIf="displayAccountButtons" (click)="loadSavings()" color="primary">
+        Savings Account Transactions
+    </button>
+
+    <button mat-raised-button *ngIf="displayAccountButtons" (click)="loadLoan()" color="primary">
+        Loan Account Transactions
+    </button>
+
+    <button mat-raised-button *ngIf="displayAccountButtons " (click)="loadCredit()" color="primary">
+        Credit Account Transactions
+    </button>
+
+    <button mat-raised-button *ngIf="displayAccountButtons" (click)="loadCurrent()" color="primary">
+        Current Account Transactions
+    </button>
+
+
+    <app-saving-transactions-view *ngIf="displaySavings"></app-saving-transactions-view>
+    <app-current-transactions-view *ngIf="displayCurrent"></app-current-transactions-view>
+    <app-credit-transactions-view *ngIf="displayCredit"></app-credit-transactions-view>
+    <app-loan-transactions-view *ngIf="displayLoan"></app-loan-transactions-view> 
+
+
 </div>
