@@ -985,7 +985,7 @@ app.get("/api/v1/getCurrentAccountNo", (req, res) => {
   }
 });
 
-app.post("/api/v1/accToAccTransactionForSavings", (req, res) => {
+app.post("/api/v1/SavingsACtransfer", (req, res) => {
   let username = req.username;
   let toAccNo = parseInt(req.body.toAccNo);
   let toAccType = req.body.toAccType;
@@ -994,28 +994,21 @@ app.post("/api/v1/accToAccTransactionForSavings", (req, res) => {
   try {
     // Validating credit card
     con_user_1.query(
-      `SELECT password, serialNo from customers, savingsaccount where
-      customers.username = ${username}
-      and savingsaccount.customerId = ${PANCard}
+      `SELECT serialNo from customers, savingsaccount where
+      customers.username = '${username}'
+      and savingsaccount.customerId = '${PANCard}'
       ;`,
       (err, result) => {
+        if (err) throw err;
         console.log(result);
         let ispassCorrect = false;
-        let serialNo = result[0]["serailNo"];
-        if (err) throw err;
-        if (result["length"] == 0) {
-        } else {
-          if (password == result[0]["password"]) {
-            ispassCorrect = true;
-          }
-        }
+        let serialNo = result[0]["serialNo"];
 
         let timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
         let txnId = Math.floor(Math.random() * 100000000000) + 1;
 
         con_user_1.query(
-          `INSERT INTO transaction VALUES(${txnId}, ${toAccNo}, '${toAccType}', "ONL", ${amount}
-            , '${timestamp}', null, null, null, null, null, ${serialNo}, '${PANCard}');`,
+          `INSERT INTO transaction VALUES(${txnId}, ${toAccNo}, '${toAccType}', "ONL", ${amount}, '${timestamp}', null, null, null, null, null, ${serialNo}, '${PANCard}');`,
           (err, result) => {
             console.log(result);
 
