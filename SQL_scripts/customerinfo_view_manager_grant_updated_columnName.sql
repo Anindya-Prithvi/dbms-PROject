@@ -3,7 +3,7 @@ drop view if exists allloanaccounttransactions;
 drop view if exists allcreditcardaccounttransactions;
 drop view if exists allcurrentaccounttransactions;
 
-create view allSavingsAccountTransactions as 
+create view allsavingsaccounttransactions as 
 select txnId,timeOfTransaction, toAccount, amount, savingsaccount.accountNo, savingsaccount.customerId, 'DEBIT' as creditOrDebit
 from transaction, savingsaccount
 where transaction.fromAccserialNo = savingsaccount.serialNo AND transaction.fromAcccustomerId = savingsaccount.customerId UNION 
@@ -11,7 +11,7 @@ select txnId,timeOfTransaction, toAccount, amount, savingsaccount.accountNo, sav
 from transaction, savingsaccount
 WHERE transaction.toAccount = savingsaccount.accountNo;
 
-create view allLoanAccountTransactions as 
+create view allloanaccounttransactions as 
 select txnId,timeOfTransaction, toAccount, amount, loanaccount.accountNo, loanaccount.customerId, 'DEBIT' as creditOrDebit
 from transaction, loanaccount
 where transaction.fromAccserialNo = loanaccount.serialNo AND transaction.fromAcccustomerId = loanaccount.customerId UNION 
@@ -36,5 +36,7 @@ from transaction, currentaccount
 WHERE transaction.toAccount = currentaccount.accountNo;
 
 -- grant select on customerInfo to 'dummyUser2';
+
+-- select * from allSavingsAccountTransactions;
 
 -- select * from allSavingsAccountTransactions;

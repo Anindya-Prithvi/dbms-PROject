@@ -1109,12 +1109,10 @@ app.post("/api/v1/CreditACtransfer", (req, res) => {
 });
 
 app.get("/api/v1/allSavingsAccountTransactionsForManager", (req, res) => {
-  let username = req.username;
-  console.log(`hello ${username}`);
   try {
     // From savings account transactions
     con_user_2.query(
-      `select * from allSavingsAccountTransactions;`,
+      `select * from allsavingsaccounttransactions;`,
       (err, result) => {
         console.log(result);
         var transactionDetails = [];
@@ -1128,7 +1126,119 @@ app.get("/api/v1/allSavingsAccountTransactionsForManager", (req, res) => {
             transaction.push(result[i]["customerId"].toString());
             transaction.push(result[i]["amount"].toString());
             transaction.push(result[i]["timeOfTransaction"].toString());
-            transaction.push(result[i]["toAccount"].toString());
+            if (!(String(result[i]["toAccount"]) === "null")) {
+              transaction.push(result[i]["toAccount"].toString());
+            } else {
+              transaction.push(" ");
+            }
+            transaction.push(result[i]["accountNo"].toString());
+            transaction.push(result[i]["creditOrDebit"].toString());
+            transactionDetails.push(transaction);
+          }
+        }
+        res.send(transactionDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/allLoanAccountTransactionsForManager", (req, res) => {
+  try {
+    // From savings account transactions
+    con_user_2.query(
+      `select * from allloanaccounttransactions;`,
+      (err, result) => {
+        console.log(result);
+        var transactionDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          for (let i = 0; i < result["length"]; i++) {
+            var transaction = [];
+            transaction.push(result[i]["txnId"].toString());
+            transaction.push(result[i]["customerId"].toString());
+            transaction.push(result[i]["amount"].toString());
+            transaction.push(result[i]["timeOfTransaction"].toString());
+            if (!(String(result[i]["toAccount"]) === "null")) {
+              transaction.push(result[i]["toAccount"].toString());
+            } else {
+              transaction.push(" ");
+            }
+            transaction.push(result[i]["accountNo"].toString());
+            transaction.push(result[i]["creditOrDebit"].toString());
+            transactionDetails.push(transaction);
+          }
+        }
+        res.send(transactionDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/allCurrentAccountTransactionsForManager", (req, res) => {
+  try {
+    // From savings account transactions
+    con_user_2.query(
+      `select * from allcurrentaccounttransactions;`,
+      (err, result) => {
+        console.log(result);
+        var transactionDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          for (let i = 0; i < result["length"]; i++) {
+            var transaction = [];
+            transaction.push(result[i]["txnId"].toString());
+            transaction.push(result[i]["customerId"].toString());
+            transaction.push(result[i]["amount"].toString());
+            transaction.push(result[i]["timeOfTransaction"].toString());
+            if (!(String(result[i]["toAccount"]) === "null")) {
+              transaction.push(result[i]["toAccount"].toString());
+            } else {
+              transaction.push(" ");
+            }
+            transaction.push(result[i]["accountNo"].toString());
+            transaction.push(result[i]["creditOrDebit"].toString());
+            transactionDetails.push(transaction);
+          }
+        }
+        res.send(transactionDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/allCreditCardAccountTransactionsForManager", (req, res) => {
+  try {
+    // From savings account transactions
+    con_user_2.query(
+      `select * from allcreditcardaccounttransactions;`,
+      (err, result) => {
+        console.log(result);
+        var transactionDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          for (let i = 0; i < result["length"]; i++) {
+            var transaction = [];
+            transaction.push(result[i]["txnId"].toString());
+            transaction.push(result[i]["customerId"].toString());
+            transaction.push(result[i]["amount"].toString());
+            transaction.push(result[i]["timeOfTransaction"].toString());
+            if (!(String(result[i]["toAccount"]) === "null")) {
+              transaction.push(result[i]["toAccount"].toString());
+            } else {
+              transaction.push(" ");
+            }
             transaction.push(result[i]["accountNo"].toString());
             transaction.push(result[i]["creditOrDebit"].toString());
             transactionDetails.push(transaction);
