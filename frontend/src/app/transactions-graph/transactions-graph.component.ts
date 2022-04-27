@@ -27,12 +27,24 @@ export class TransactionsGraphComponent implements OnInit {
       document.getElementsByTagName('head')[0].appendChild(this.myScriptElement);
       var elt = document.getElementById('calculator');
       var calculator = this.Desmos.GraphingCalculator(elt);
+
       // instructions to populate
       // 1. see the line below, edit latex: 'someedits here'
       // I have already fille with points, if you maintain the syntax yayyy
       // dont do ched chaad above lol
+      this.datapoints = [[1, 2], [3, 4]];
+
+      let latexinput: string = '(';
+      for (let index = 0; index < this.datapoints.length - 1; index++) {
+        const element = '[' + this.datapoints[index].toString() + '],';
+        latexinput += element;
+      }
+      latexinput += '[' + this.datapoints[this.datapoints.length - 1] + '])';
       console.log(this.datapoints);
-      calculator.setExpression({ id: 'count vs epoch', latex: '([11111111,1000000],[-1000,1000])' });
+
+
+
+      calculator.setExpression({ id: 'count vs epoch', latex: latexinput });
       calculator.setMathBounds({
         left: -10000000000,
         right: 10000000000,
