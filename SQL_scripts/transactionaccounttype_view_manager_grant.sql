@@ -1,10 +1,8 @@
-use bdsm;
-drop view allsavingsaccounttransactions;
-drop view allloanaccounttransactions;
-drop view allcreditcardaccounttransactions;
-drop view allcurrentaccounttransactions;
-
-
+use msdb_190422;
+drop view if exists allsavingsaccounttransactions;
+drop view if exists allloanaccounttransactions;
+drop view if exists allcreditcardaccounttransactions;
+drop view if exists allcurrentaccounttransactions;
 
 create view allSavingsAccountTransactions as 
 select txnId,timeOfTransaction, toAccount, amount, savingsaccount.accountNo, savingsaccount.customerId, 'DEBIT'
@@ -38,5 +36,4 @@ select txnId,timeOfTransaction, toAccount, amount, currentaccount.accountNo, cur
 from transaction, currentaccount
 WHERE transaction.toAccount = currentaccount.accountNo;
 
-CREATE USER 'branchManager'@'localhost' IDENTIFIED BY 'password';
-grant select on customerInfo to 'branchManager'@'localhost';
+-- grant select on customerInfo to 'bankadmin';
