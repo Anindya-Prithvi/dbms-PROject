@@ -101,6 +101,7 @@
     <app-current-transactions-view *ngIf="displayCurrent"></app-current-transactions-view>
     <app-credit-transactions-view *ngIf="displayCredit"></app-credit-transactions-view>
     <app-loan-transactions-view *ngIf="displayLoan"></app-loan-transactions-view>
-    <app-transactions-graph *ngIf="displayGraph" [datapoints]="datapoints"></app-transactions-graph>
+    <app-transactions-graph *ngIf="displayGraph" [datapoints]="datapoints"
+        style="display: flex; justify-content: center;"></app-transactions-graph>
 
 </div>

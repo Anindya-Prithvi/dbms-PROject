@@ -34,7 +34,7 @@ export class AppComponent {
     axios.get('/api/v1/login').then(response => {
       this.isLoggedIn = (String(response.data) === 'true');
 
-      if(this.isLoggedIn === true) {
+      if (this.isLoggedIn === true) {
         axios.get("/api/v1/hasSavings").then(response => {
           console.log("OYE Savings hei: " + response.data);
           console.log(response.data);
@@ -91,7 +91,7 @@ export class AppComponent {
   loadCurrent() {
     console.log("Savings uhdwudheuhload kar");
     console.log("PAGALPAN")
-    this.displaySavings = false; 
+    this.displaySavings = false;
     this.displayCurrent = true;
     this.displayCredit = false;
     this.displayLoan = false;
@@ -103,7 +103,7 @@ export class AppComponent {
   loadCredit() {
     console.log("Savings uhdwudheuhload kar");
     console.log("PAGALPAN")
-    this.displaySavings = false; 
+    this.displaySavings = false;
     this.displayCurrent = false;
     this.displayCredit = true;
     this.displayLoan = false;
@@ -115,7 +115,7 @@ export class AppComponent {
   loadLoan() {
     console.log("Savings uhdwudheuhload kar");
     console.log("PAGALPAN")
-    this.displaySavings = false; 
+    this.displaySavings = false;
     this.displayCurrent = false;
     this.displayCredit = false;
     this.displayLoan = true;
@@ -130,6 +130,8 @@ export class AppComponent {
     this.displayCredit = false;
     this.displayLoan = false;
     this.displayGraph = true;
+    // goal is to fetch data whenever called
+    // create aggregator query
 
     this.displayAccountButtons = false;
   }
@@ -140,11 +142,11 @@ export class AppComponent {
     this.displayCurrent = false;
     this.displayCredit = false;
     this.displayLoan = false;
-    
+
     this.displayAccountButtons = true;
   }
 
- 
+
 
   logout() {
     this.isLoggedIn = false;
