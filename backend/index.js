@@ -511,6 +511,7 @@ SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId
           console.log(result["length"]);
           transactions = showTransactions(result);
         }
+        console.log("Tansactions: " + transactions);
         res.send(transactions);
       }
     );
