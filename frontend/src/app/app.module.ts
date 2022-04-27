@@ -30,6 +30,7 @@ import { CreditTransactionsViewComponent } from './credit-transactions-view/cred
 import { CurrentTransactionsViewComponent } from './current-transactions-view/current-transactions-view.component';
 import { LoanTransactionsViewComponent } from './loan-transactions-view/loan-transactions-view.component';
 import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
+import { CreditSendMoneyCreditCardComponent } from './credit-send-money-credit-card/credit-send-money-credit-card.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { TransactionsGraphComponent } from './transactions-graph/transactions-gr
     CreditTransactionsViewComponent,
     CurrentTransactionsViewComponent,
     LoanTransactionsViewComponent,
-    TransactionsGraphComponent
+    TransactionsGraphComponent,
+    CreditSendMoneyCreditCardComponent
   ],
   imports: [
     BrowserModule,

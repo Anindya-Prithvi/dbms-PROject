@@ -30,6 +30,30 @@ export class AppComponent {
     // }
     axios.get('/api/v1/login').then(response => {
       this.isLoggedIn = (String(response.data) === 'true');
+
+      if(this.isLoggedIn === true) {
+        axios.get("/api/v1/hasSavings").then(response => {
+          console.log("OYE Savings hei: " + response.data);
+          console.log(response.data);
+          this.hasSavings = response.data;
+        });
+        axios.get("/api/v1/hasLoan").then(response => {
+          console.log("OYE Savings hei: " + response.data);
+          console.log(response.data);
+          this.hasLoan = response.data;
+        });
+        axios.get("/api/v1/hasCurrent").then(response => {
+          console.log("OYE Savings hei: " + response.data);
+          console.log(response.data);
+          this.hasCurrent = response.data;
+        });
+        axios.get("/api/v1/hasCredit").then(response => {
+          console.log("OYE Savings hei: " + response.data);
+          console.log(response.data);
+          this.hasCredit = response.data;
+        });
+      }
+
     });
     const checklogin1 = window.setInterval(() => {
       axios.get('/api/v1/login').then(response => {

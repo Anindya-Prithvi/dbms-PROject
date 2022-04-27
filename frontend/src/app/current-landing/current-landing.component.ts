@@ -17,7 +17,7 @@ export class CurrentLandingComponent implements OnInit {
   ngOnInit(): void {
   }
   getBalance() {
-    return axios.get("/api/v1/savingsBalance").then(response => {
+    return axios.get("/api/v1/currentBalance").then(response => {
       console.log("OYE BALANCE: " + response.data);
       console.log(response.data);
       this.balance = response.data;

@@ -496,7 +496,7 @@ app.get("/api/v1/getCreditCardDetails", (req, res) => {
   try {
     // From credit card account transactions
     con_user_1.query(
-      `SELECT cardNo, expiryDate, customerName
+      `SELECT cardNo, expiryDate, customerName, CVV
       FROM customers, creditcard, creditcardaccount 
       WHERE customers.username = '${username}'
       AND creditcardaccount.customerID = customers.pancard
@@ -508,6 +508,7 @@ app.get("/api/v1/getCreditCardDetails", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
+            console.log("CVV: " + result[0]["CVV"]);
           console.log(result["length"]);
           creditCardDetails.push(result[0]["cardNo"]);
           creditCardDetails.push(result[0]["expiryDate"]);
@@ -527,7 +528,7 @@ app.get("/api/v1/getDebitCardDetails", (req, res) => {
   try {
     // From credit card account transactions
     con_user_1.query(
-      `SELECT cardNo, expiryDate, customerName
+      `SELECT cardNo, expiryDate, customerName, CVV
       FROM customers, debitcard, savingsaccount 
       WHERE customers.username = '${username}' 
       AND savingsaccount.customerID = customers.pancard
@@ -539,6 +540,7 @@ app.get("/api/v1/getDebitCardDetails", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
+            console.log("CVV :" + result[0]["CVV"])
           console.log(result["length"]);
           debitCardDetails.push(result[0]["cardNo"]);
           debitCardDetails.push(result[0]["expiryDate"]);
@@ -1358,6 +1360,32 @@ order by max_amount_due limit 100;`,
         }
 
         res.send(detailsOfAccounts);
+      }
+    );
+  } catch (error) {
+    console.log("someone sent a faulty req");
+    res.status(404);
+  }
+});
+
+app.get("/api/v1/getCreditAmountDue", (req, res) => {
+  let username = req.username;
+  console.log(username);
+
+  try {
+    con_user_1.query(
+      `
+      SELECT amountDue from creditcardaccount, customers where customers.username = "${username}" 
+AND customers.pancard = creditcardaccount.customerId;`,
+      (err, result) => {
+        let amountDue = 0;
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          amountDue = result[0]["amountDue"];
+        }
+
+        res.send(amountDue.toString());
       }
     );
   } catch (error) {

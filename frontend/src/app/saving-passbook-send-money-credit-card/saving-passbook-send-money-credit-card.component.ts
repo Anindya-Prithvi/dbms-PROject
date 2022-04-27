@@ -21,11 +21,20 @@ export class SavingPassbookSendMoneyCreditCardComponent implements OnInit {
     amount: new FormControl('', [Validators.required])
   })
 
-  @Input()
-  logintype: string | undefined = undefined; 
+  constructor() { 
+    let credDetails!: string[];
+    axios.get("/api/v1/getCreditCardDetails").then(response => {
+      console.log("OYE Credit card hei: " + response.data);
+      console.log(response.data);
+      credDetails = response.data;
 
+      this.cardNo = credDetails[0];
+      this.expiry = credDetails[1];
+      this.name = credDetails[2];
+       
+    });
+  }
 
-  constructor() { }
 
   ngOnInit(): void {
   }
@@ -33,7 +42,7 @@ export class SavingPassbookSendMoneyCreditCardComponent implements OnInit {
   onSubmit(): void {
     console.log(this.transactionCreds.value);
     //use login endpoint
-    axios.post('/api/v1/' + (this.logintype === 'user' ? 'login' : 'managerlogin'), this.transactionCreds.value).then(response => {
+    axios.post('/api/v1/SavingsACtransfer' , this.transactionCreds.value).then(response => {
       console.log(response.data);
       console.log(response);
 
