@@ -1,4 +1,4 @@
-DROP TRIGGER before_transaction_insert;
+DROP TRIGGER IF EXISTS before_transaction_insert;
 
 DELIMITER $$
 create TRIGGER before_transaction_insert BEFORE INSERT
@@ -16,4 +16,3 @@ OR
 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient Balance.';
 END IF; $$
 DELIMITER ; 
-
