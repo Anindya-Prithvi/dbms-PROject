@@ -234,16 +234,37 @@ app.post("/api/v1/managerlogin", (req, res) => {
   }
 });
 
-app.get("/api/v1/register", (req, res) => {
-  con_user_1.query(`SELECT 1`, (err, result) => {
-    if (err) throw err;
-    console.log(result);
-  });
-  res.send("Working");
-});
-
 app.post("/api/v1/register", (req, res) => {
-  con_user_1.query(`-- INSERT INTO ${req.body}`, (err, result) => {
+  let rb = req.body;
+  let foundHash;
+
+  con_user_2.query(`SELECT password_hash
+FROM manager
+WHERE empID='${req.body.empID}';`, (err, result) => {
+    if (err) throw err;
+    if (result["length"] == 0) {
+    } else {
+      foundHash = result[0]["password_hash"];
+    }
+  })
+
+  let madepasswordhashforuser = createHash("sha256")
+    .update(req.body.password)
+    .digest("hex");
+  con_user_2.query(`
+  INSERT INTO customers values(
+    '${rb.pan})',
+    '${rb.customerName}',
+    ${rb.address_flatno},
+    '${rb.address_locality}',
+    '${rb.address_state}',
+    '${rb.address_country}',
+    ${rb.creditScore},
+    ${rb.phone_countryCode},
+    ${rb.phone_number},
+    '${rb.username}',
+    '${madepasswordhashformanager}'
+    );`, (err, result) => {
     if (err) throw err;
     console.log(result);
     console.log("posting");

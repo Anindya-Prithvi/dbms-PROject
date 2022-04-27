@@ -248,50 +248,42 @@ class AccountType:
         values = []
 
         for n1, i in enumerate(customers):
-            while True:
-                typeacc = "SAV"
-                customer = i[0]
-                epochdt = random.randint(1284286794, 1646222220)
-                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                break
+            
+            typeacc = "SAV"
+            customer = i[0]
+            epochdt = random.randint(1284286794, 1646222220)
+            timestamp = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
             bmt = secrets.choice(branchbyman)
             delta += 1
             values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
-            while True and random.random() > 0.4:
+            if random.random() > 0.4:
                 typeacc = "CRD"
                 customer = i[0]
                 epochdt = random.randint(1284286794, 1646222220)
-                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                break
-            bmt = secrets.choice(branchbyman)
-            delta += 1
-            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
-            while True and random.random() > 0.8:
+                timestamp = datetime.datetime.fromtimestamp(epochdt).strftime("%Y-%m-%d %H:%M:%S")
+                bmt = secrets.choice(branchbyman)
+                delta += 1
+                values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+            if random.random() > 0.8:
                 typeacc = "CUR"
                 customer = i[0]
                 epochdt = random.randint(1284286794, 1646222220)
                 timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
                     "%Y-%m-%d %H:%M:%S"
                 )
-                break
-            bmt = secrets.choice(branchbyman)
-            delta += 1
-            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
-            while True and random.random() > 0.3:
+                bmt = secrets.choice(branchbyman)
+                delta += 1
+                values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+            if random.random() > 0.3:
                 typeacc = "LON"
                 customer = i[0]
                 epochdt = random.randint(1284286794, 1646222220)
                 timestamp = datetime.datetime.fromtimestamp(epochdt).strftime(
                     "%Y-%m-%d %H:%M:%S"
                 )
-                break
-            bmt = secrets.choice(branchbyman)
-            delta += 1
-            values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
+                bmt = secrets.choice(branchbyman)
+                delta += 1
+                values.append((sno + delta, timestamp, typeacc, bmt[0], bmt[1], customer))
         return values
 
     def inject(values):
