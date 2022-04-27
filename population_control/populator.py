@@ -1086,3 +1086,7 @@ with open("data/tryjection.sql", "w") as f:
         f.write(g.read())
     with open("../SQL_scripts/branchinfo_view_customer_grant.sql", "r") as g:
         f.write(g.read())
+    with open("../SQL_scripts/minBalanceTriggers.sql", "r") as g:
+        f.write(g.read())
+    with open("../SQL_scripts/customerUsernameGenerateTrigger.sql", "r") as g:
+        f.write(g.read())

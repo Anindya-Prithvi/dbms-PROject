@@ -1,7 +1,6 @@
-use bdsm;
-drop trigger before_savings_insert;
-drop trigger before_creditcard_insert;
-drop trigger before_loan_insert;
+drop trigger if exists before_savings_insert;
+drop trigger if exists before_creditcard_insert;
+drop trigger if exists before_loan_insert;
 
 DELIMITER $$
 CREATE TRIGGER before_savings_insert BEFORE INSERT
