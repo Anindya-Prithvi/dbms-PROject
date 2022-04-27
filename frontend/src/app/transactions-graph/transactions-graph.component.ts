@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-transactions-graph',
@@ -7,7 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TransactionsGraphComponent implements OnInit {
   myScriptElement: HTMLScriptElement;
-  Desmos: any
+  Desmos: any;
+
+  @Input()
+  datapoints!: number[][];
 
   constructor() {
     this.myScriptElement = document.createElement("script");
@@ -28,6 +31,7 @@ export class TransactionsGraphComponent implements OnInit {
       // 1. see the line below, edit latex: 'someedits here'
       // I have already fille with points, if you maintain the syntax yayyy
       // dont do ched chaad above lol
+      console.log(this.datapoints);
       calculator.setExpression({ id: 'count vs epoch', latex: '([11111111,1000000],[-1000,1000])' });
       calculator.setMathBounds({
         left: -10000000000,
