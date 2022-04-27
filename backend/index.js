@@ -272,7 +272,7 @@ app.get("/api/v1/savingsBalance", (req, res) => {
         if (result["length"] == 0) {
         } else {
           balance = result[0]["balance"];
-          console.log("INNER: " + balance);
+
         }
 
         res.send(balance.toString());
@@ -282,7 +282,7 @@ app.get("/api/v1/savingsBalance", (req, res) => {
     console.log("someone sent a faulty req");
     res.status(404);
   }
-  console.log("ASDASD" + customerId);
+  
 });
 
 function showTransactions(result) {
@@ -322,7 +322,7 @@ function showTransactions(result) {
 
 app.get("/api/v1/savingsTransaction", (req, res) => {
   let username = req.username;
-  console.log(`hello ${username}`);
+
   try {
     // From savings account transactions
     con_user_1.query(
@@ -360,7 +360,6 @@ SELECT txnID as transID, amount, timeOfTransaction, toAccount, fromAcccustomerId
 
 app.get("/api/v1/currentTransaction", (req, res) => {
   let username = req.username;
-  console.log(`hello ${username}`);
   try {
     // From current account transactions
     con_user_1.query(
