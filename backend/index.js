@@ -1108,4 +1108,38 @@ app.post("/api/v1/CreditACtransfer", (req, res) => {
   }
 });
 
+app.get("/api/v1/allSavingsAccountTransactionsForManager", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From savings account transactions
+    con_user_2.query(
+      `select * from allSavingsAccountTransactions;`,
+      (err, result) => {
+        console.log(result);
+        var transactionDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          for (let i = 0; i < result["length"]; i++) {
+            var transaction = [];
+            transaction.push(result[i]["txnId"].toString());
+            transaction.push(result[i]["customerId"].toString());
+            transaction.push(result[i]["amount"].toString());
+            transaction.push(result[i]["timeOfTransaction"].toString());
+            transaction.push(result[i]["toAccount"].toString());
+            transaction.push(result[i]["accountNo"].toString());
+            transaction.push(result[i]["creditOrDebit"].toString());
+            transactionDetails.push(transaction);
+          }
+        }
+        res.send(transactionDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.listen(process.env.PORT || port);
