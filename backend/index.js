@@ -852,6 +852,139 @@ AND customers.pancard = creditcardaccount.customerId;`,
   console.log("ASDASD" + customerId);
 });
 
+app.get("/api/v1/displayLoanAccountDetails", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `select principal, amountDue, interestRate, billingCycle, dueDate from loanaccount, customers
+      where customers.pancard = loanaccount.customerID and customers.username = "${username}";`,
+      (err, result) => {
+        console.log(result);
+        var loanAccountDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          loanAccountDetails.push(result[0]["principal"].toString());
+          loanAccountDetails.push(result[0]["amountDue"].toString());
+          loanAccountDetails.push(result[0]["interestRate"].toString());
+          loanAccountDetails.push(result[0]["billingCycle"].toString());
+          loanAccountDetails.push(result[0]["dueDate"].toString());
+        }
+        res.send(loanAccountDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getCreditCardAccountNo", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `select accountNo, serialNo from creditcardaccount, customers
+      where customers.pancard = creditcardaccount.customerID and customers.username = "${username}";`,
+      (err, result) => {
+        console.log(result);
+        var AccountDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          AccountDetails.push(result[0]["accountNo"].toString());
+          AccountDetails.push(result[0]["serialNo"].toString());
+        }
+        res.send(AccountDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getLoanAccountNo", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `select accountNo, serialNo from loanaccount, customers
+      where customers.pancard = loanaccount.customerID and customers.username = "${username}";`,
+      (err, result) => {
+        console.log(result);
+        var AccountDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          AccountDetails.push(result[0]["accountNo"].toString());
+          AccountDetails.push(result[0]["serialNo"].toString());
+        }
+        res.send(AccountDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getSavingsAccountNo", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `select accountNo, serialNo from savingsaccount, customers
+      where customers.pancard = savingsaccount.customerID and customers.username = "${username}";`,
+      (err, result) => {
+        console.log(result);
+        var AccountDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          AccountDetails.push(result[0]["accountNo"].toString());
+          AccountDetails.push(result[0]["serialNo"].toString());
+        }
+        res.send(AccountDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/api/v1/getCurrentAccountNo", (req, res) => {
+  let username = req.username;
+  console.log(`hello ${username}`);
+  try {
+    // From credit card account transactions
+    con_user_1.query(
+      `select accountNo, serialNo from currentaccount, customers
+      where customers.pancard = currentaccount.customerID and customers.username = "${username}";`,
+      (err, result) => {
+        console.log(result);
+        var AccountDetails = [];
+        if (err) throw err;
+        if (result["length"] == 0) {
+        } else {
+          console.log(result["length"]);
+          AccountDetails.push(result[0]["accountNo"].toString());
+          AccountDetails.push(result[0]["serialNo"].toString());
+        }
+        res.send(AccountDetails);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.post("/api/v1/sendMoney", (req, res) => {
   let username = req.username;
   try {

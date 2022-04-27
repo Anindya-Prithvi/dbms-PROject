@@ -1,5 +1,6 @@
 DROP TRIGGER IF EXISTS after_transaction_insert;
 
+DELIMITER $$ 
 create TRIGGER after_transaction_insert AFTER INSERT
 on transaction
 FOR EACH ROW
@@ -35,3 +36,7 @@ WHERE NEW.fromAccserialNo =  loanaccount.serialNo AND NEW.fromAcccustomerId = lo
 UPDATE creditcardaccount
 SET amountDue = amountDue - new.amount
 WHERE NEW.fromAccserialNo =  creditcardaccount.serialNo AND NEW.fromAcccustomerId = creditcardaccount.customerId;
+
+END $$
+
+DELIMITER ;
