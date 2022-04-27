@@ -272,7 +272,6 @@ app.get("/api/v1/savingsBalance", (req, res) => {
         if (result["length"] == 0) {
         } else {
           balance = result[0]["balance"];
-
         }
 
         res.send(balance.toString());
@@ -282,7 +281,6 @@ app.get("/api/v1/savingsBalance", (req, res) => {
     console.log("someone sent a faulty req");
     res.status(404);
   }
-  
 });
 
 function showTransactions(result) {
@@ -546,7 +544,7 @@ app.post("/api/v1/paymentThroughDebitCard", (req, res) => {
       FROM customers, debitcard, savingsaccount 
       WHERE customers.username = '${username}' 
       AND savingsaccount.customerID = customers.pancard
-      AND savingsaccount.accountNo = debitcard.creditCardAccountNo
+      AND savingsaccount.accountNo = debitcard.savingsAccountNo
       ;`,
       (err, result) => {
         console.log(result);
@@ -556,30 +554,30 @@ app.post("/api/v1/paymentThroughDebitCard", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
-          if (req.body.cvv == result[0]["cvv"]) {
+          if (parseInt(req.body.cvv) == result[0]["cvv"]) {
             isCVVCorrect = true;
           }
         }
-
         let timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
         let txnId = Math.floor(Math.random() * 100000000000) + 1;
 
-        con_user_1.query(
-          `INSERT INTO transaction VALUES(${txnId}, ${toAccount}, '${toAccountType}', "ONL", ${amount}
-            , '${timestamp}', null, ${cardNo}, null, null, null, ${serialNo}, '${PANCard}');`,
-          (err, result) => {
-            console.log(result);
+        if (isCVVCorrect) {
+          con_user_1.query(
+            `INSERT INTO transaction VALUES(${txnId}, ${toAccount}, '${toAccountType}', "ONL", ${amount}
+              , '${timestamp}', null, ${cardNo}, null, null, null, ${serialNo}, '${PANCard}');`,
+            (err, result) => {
+              console.log(result);
 
-            if (err) res.send(err);
-            else {
+              if (err) throw err;
               if (result["length"] == 0) {
-                console.log("This shall never happen lol");
               } else {
               }
               res.send("Success");
             }
-          }
-        );
+          );
+        } else {
+          res.send("Incorrect CVV");
+        }
       }
     );
   } catch (error) {
@@ -618,20 +616,23 @@ app.post("/api/v1/paymentThroughCreditCard", (req, res) => {
         let timestamp = new Date().toISOString().slice(0, 19).replace("T", " ");
         let txnId = Math.floor(Math.random() * 100000000000) + 1;
 
-        con_user_1.query(
-          `INSERT INTO transaction VALUES(${txnId}, ${toAccount}, '${toAccountType}', "ONL", ${amount}
-            , '${timestamp}', null, null, ${cardNo}, null, null, ${serialNo}, '${PANCard}');`,
-          (err, result) => {
-            if (err) res.send(err);
-            else {
+        if (isCVVCorrect) {
+          con_user_1.query(
+            `INSERT INTO transaction VALUES(${txnId}, ${toAccount}, '${toAccountType}', "ONL", ${amount}
+              , '${timestamp}', null, null, ${cardNo}, null, null, ${serialNo}, '${PANCard}');`,
+            (err, result) => {
+              console.log(result);
+
+              if (err) throw err;
               if (result["length"] == 0) {
-                console.log("This shall never happen lol");
               } else {
               }
               res.send("Success");
             }
-          }
-        );
+          );
+        } else {
+          res.send("Incorrect CVV");
+        }
       }
     );
   } catch (error) {
