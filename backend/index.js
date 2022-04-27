@@ -187,7 +187,7 @@ app.get("/api/v1/managerlogin", (req, res) => {
 });
 // note user==empid, so req.username and user in jwt cookie shall stay consistent for managers
 app.post("/api/v1/managerlogin", (req, res) => {
-  let foundHash = "";
+  let foundHash;
   try {
     con_user_1.query(
       `
@@ -236,17 +236,28 @@ app.post("/api/v1/managerlogin", (req, res) => {
 
 app.post("/api/v1/register", (req, res) => {
   let rb = req.body;
-  let foundHash;
+  let proceed = false;
 
   con_user_2.query(`SELECT password_hash
 FROM manager
-WHERE empID='${req.body.empID}';`, (err, result) => {
+WHERE empID='${rb.empID}';`, (err, result) => {
     if (err) throw err;
     if (result["length"] == 0) {
     } else {
       foundHash = result[0]["password_hash"];
+      let givenPassHashed = createHash("sha256")
+        .update(rb.employee_password)
+        .digest("hex");
+      if (givenPassHashed == foundHash) {
+        proceed = true;
+      }
     }
-  })
+  });
+
+  if (!proceed) {
+    res.send("failed | wrong");
+    throw Error("Galat password hai bro");
+  }
 
   let madepasswordhashforuser = createHash("sha256")
     .update(req.body.password)
@@ -263,7 +274,7 @@ WHERE empID='${req.body.empID}';`, (err, result) => {
     ${rb.phone_countryCode},
     ${rb.phone_number},
     '${rb.username}',
-    '${madepasswordhashformanager}'
+    '${madepasswordhashforuser}'
     );`, (err, result) => {
     if (err) throw err;
     console.log(result);
@@ -508,7 +519,7 @@ app.get("/api/v1/getCreditCardDetails", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
-            console.log("CVV: " + result[0]["CVV"]);
+          console.log("CVV: " + result[0]["CVV"]);
           console.log(result["length"]);
           creditCardDetails.push(result[0]["cardNo"]);
           creditCardDetails.push(result[0]["expiryDate"]);
@@ -540,7 +551,7 @@ app.get("/api/v1/getDebitCardDetails", (req, res) => {
         if (err) throw err;
         if (result["length"] == 0) {
         } else {
-            console.log("CVV :" + result[0]["CVV"])
+          console.log("CVV :" + result[0]["CVV"])
           console.log(result["length"]);
           debitCardDetails.push(result[0]["cardNo"]);
           debitCardDetails.push(result[0]["expiryDate"]);
