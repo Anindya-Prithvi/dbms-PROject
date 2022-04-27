@@ -29,6 +29,7 @@ function validateCookies(req, res, next) {
     req.cookies.accesscookie == null &&
     (req.url.match("/api/v[0-9]+/login") ||
       req.url.match("/api/v[0-9]+/managerlogin") ||
+      req.url.match("/api/v[0-9]+/register") ||
       !req.url.match("/api.*"))
   ) {
     // console.log("Should issue cookie soon");
@@ -61,7 +62,8 @@ function injectInfofromJWT(req, res, next) {
   if (
     req.url === "/api/v1/logout" ||
     req.url === "/api/v1/login" ||
-    req.url === "/api/v1/managerlogin"
+    req.url === "/api/v1/managerlogin" ||
+    req.url === "/api/v1/register"
   ) {
   } else {
     console.log(`reissuing cookie given url ${req.url}`);
