@@ -1090,3 +1090,5 @@ with open("data/tryjection.sql", "w") as f:
         f.write(g.read())
     with open("../SQL_scripts/customerUsernameGenerateTrigger.sql", "r") as g:
         f.write(g.read())
+    with open("../SQL_scripts/savings_creation_trigger.sql", "r") as g:
+        f.write(g.read())

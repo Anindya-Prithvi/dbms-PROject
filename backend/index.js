@@ -238,12 +238,12 @@ app.post("/api/v1/managerlogin", (req, res) => {
 
 app.post("/api/v1/register", (req, res) => {
   let rb = req.body;
-  let proceed = false;
 
   con_user_2.query(`SELECT password_hash
 FROM manager
 WHERE empID='${rb.empID}';`, (err, result) => {
     if (err) throw err;
+    let proceed = false;
     if (result["length"] == 0) {
     } else {
       foundHash = result[0]["password_hash"];
@@ -253,36 +253,52 @@ WHERE empID='${rb.empID}';`, (err, result) => {
       if (givenPassHashed == foundHash) {
         proceed = true;
       }
+      if (!proceed) {
+        res.send("failed | wrong credentials of creator");
+        throw Error("Galat password hai bro");
+      }
+
+      let madepasswordhashforuser = createHash("sha256")
+        .update(rb.user_password)
+        .digest("hex");
+      con_user_2.query(`
+      INSERT INTO customers values(
+        '${rb.pan}',
+        '${rb.customerName}',
+        ${rb.address_flatno},
+        '${rb.address_locality}',
+        '${rb.address_state}',
+        '${rb.address_country}',
+        1000,
+        ${rb.phone_countryCode},
+        ${rb.phone_number},
+        '${rb.username}',
+        '${madepasswordhashforuser}'
+        );`, (err, result) => {
+        if (err) {
+          res.send(err.message);
+          // throw err;
+        }
+        else {
+          con_user_2.query(`INSERT INTO accounttype values(null, NOW(), 'SAV', ${rb.empID}
+          , 'SBIN577989', '${rb.pan}'
+          );`, (err, result) => {
+            if (err) {
+              res.send(err.message);
+            }
+            else {
+              res.send("Success");
+            }
+          })
+
+
+        }
+
+      });
     }
   });
 
-  if (!proceed) {
-    res.send("failed | wrong");
-    throw Error("Galat password hai bro");
-  }
 
-  let madepasswordhashforuser = createHash("sha256")
-    .update(req.body.password)
-    .digest("hex");
-  con_user_2.query(`
-  INSERT INTO customers values(
-    '${rb.pan})',
-    '${rb.customerName}',
-    ${rb.address_flatno},
-    '${rb.address_locality}',
-    '${rb.address_state}',
-    '${rb.address_country}',
-    ${rb.creditScore},
-    ${rb.phone_countryCode},
-    ${rb.phone_number},
-    '${rb.username}',
-    '${madepasswordhashforuser}'
-    );`, (err, result) => {
-    if (err) throw err;
-    console.log(result);
-    console.log("posting");
-    res.send("Registered!!");
-  });
 });
 
 app.get("/api/v1/savingsBalance", (req, res) => {
