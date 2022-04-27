@@ -1055,8 +1055,8 @@ app.get("/api/v1/getCurrentAccountNo", (req, res) => {
 
 app.post("/api/v1/SavingsACtransfer", (req, res) => {
   let username = req.username;
-  let toAccNo = parseInt(req.body.toAccNo);
-  let toAccType = req.body.toAccType;
+  let toAccNo = parseInt(req.body.toAccount);
+  let toAccType = req.body.toAccountType;
   let PANCard = req.PAN;
   let amount = parseInt(req.body.amount);
   try {
@@ -1099,8 +1099,8 @@ app.post("/api/v1/SavingsACtransfer", (req, res) => {
 
 app.post("/api/v1/CurrentACtransfer", (req, res) => {
   let username = req.username;
-  let toAccNo = parseInt(req.body.toAccNo);
-  let toAccType = req.body.toAccType;
+  let toAccNo = parseInt(req.body.toAccount);
+  let toAccType = req.body.toAccountType;
   let PANCard = req.PAN;
   let amount = parseInt(req.body.amount);
   try {
@@ -1143,8 +1143,8 @@ app.post("/api/v1/CurrentACtransfer", (req, res) => {
 
 app.post("/api/v1/CreditACtransfer", (req, res) => {
   let username = req.username;
-  let toAccNo = parseInt(req.body.toAccNo);
-  let toAccType = req.body.toAccType;
+  let toAccNo = parseInt(req.body.toAccount);
+  let toAccType = req.body.toAccountType;
   let PANCard = req.PAN;
   let amount = parseInt(req.body.amount);
   try {

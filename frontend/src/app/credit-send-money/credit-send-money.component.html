@@ -4,11 +4,12 @@
 	<h4>Button Toggle inside of a Reactive form</h4>
 	<mat-button-toggle-group [formControl]="fontStyleControl" aria-label="Font Style">
 	  <mat-button-toggle value="credit" (change)="selectPaymentMethod()">Credit Card</mat-button-toggle>
+	  <mat-button-toggle value="direct" (change)="selectPaymentMethod()">Direct Intrabank Transfer</mat-button-toggle>
 	</mat-button-toggle-group>
 	<p>Chosen value is {{fontStyleControl.value}}</p>
 </section>
       
 <div style="text-align: center; width: 100vw;">
 <app-credit-send-money-credit-card *ngIf="showCreditCardPayment"></app-credit-send-money-credit-card>
-<!-- <app-credit *ngIf="showCreditCardPayment" ></app-saving-passbook-send-money-credit-card> -->
+<app-direct-account-transfer *ngIf="showDirectPayment" [apiGateway]="'CreditACtransfer'"></app-direct-account-transfer>
 </div>
