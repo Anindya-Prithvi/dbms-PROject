@@ -9,7 +9,7 @@ import {FormControl} from '@angular/forms';
 export class SavingPassbookSendMoneyComponent implements OnInit {
 
   showDebitCardPayment = false;
-  showCreditCardPayment = false;
+  showDirectPayment = false;
   fontStyleControl = new FormControl();
 
   // fontStyle?: string;
@@ -19,9 +19,9 @@ export class SavingPassbookSendMoneyComponent implements OnInit {
     if(this.fontStyleControl.value == "debit") {
       
       this.showDebitCardPayment = true;
-      this.showCreditCardPayment = false;
-    }else if(this.fontStyleControl.value == "credit") {
-      this.showCreditCardPayment = true;
+      this.showDirectPayment = false;
+    }else if(this.fontStyleControl.value == "direct") {
+      this.showDirectPayment = true;
       this.showDebitCardPayment = false;
     }
   }
