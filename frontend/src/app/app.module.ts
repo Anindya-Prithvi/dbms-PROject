@@ -29,6 +29,7 @@ import { SavingTransactionsViewComponent } from './saving-transactions-view/savi
 import { CreditTransactionsViewComponent } from './credit-transactions-view/credit-transactions-view.component';
 import { CurrentTransactionsViewComponent } from './current-transactions-view/current-transactions-view.component';
 import { LoanTransactionsViewComponent } from './loan-transactions-view/loan-transactions-view.component';
+import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { LoanTransactionsViewComponent } from './loan-transactions-view/loan-tra
     SavingTransactionsViewComponent,
     CreditTransactionsViewComponent,
     CurrentTransactionsViewComponent,
-    LoanTransactionsViewComponent
+    LoanTransactionsViewComponent,
+    TransactionsGraphComponent
   ],
   imports: [
     BrowserModule,
