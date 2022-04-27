@@ -8,6 +8,8 @@ import { axios } from 'src/utilities/axios';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  datapoints: number[][] = [];
+
   title = 'material-girl';
   isLoggedIn: boolean = false;
   managerisLoggedIn: boolean = false;
@@ -22,6 +24,7 @@ export class AppComponent {
   displayCurrent: boolean = false;
   displayCredit: boolean = false;
   displayLoan: boolean = false;
+  displayGraph: boolean = false;
 
   // See something for cookie disabled people
   constructor() {
@@ -80,6 +83,7 @@ export class AppComponent {
     this.displayCurrent = false;
     this.displayLoan = false;
     this.displayCredit = false;
+    this.displayGraph = false;
 
     this.displayAccountButtons = false;
   }
@@ -91,6 +95,7 @@ export class AppComponent {
     this.displayCurrent = true;
     this.displayCredit = false;
     this.displayLoan = false;
+    this.displayGraph = false;
 
     this.displayAccountButtons = false;
   }
@@ -102,6 +107,7 @@ export class AppComponent {
     this.displayCurrent = false;
     this.displayCredit = true;
     this.displayLoan = false;
+    this.displayGraph = false;
 
     this.displayAccountButtons = false;
   }
@@ -113,9 +119,22 @@ export class AppComponent {
     this.displayCurrent = false;
     this.displayCredit = false;
     this.displayLoan = true;
+    this.displayGraph = false;
 
     this.displayAccountButtons = false;
   }
+
+  loadGraph() {
+    this.displaySavings = false;
+    this.displayCurrent = false;
+    this.displayCredit = false;
+    this.displayLoan = false;
+    this.displayGraph = true;
+
+    this.displayAccountButtons = false;
+  }
+
+
   goHome() {
     this.displaySavings = false;
     this.displayCurrent = false;
@@ -124,6 +143,8 @@ export class AppComponent {
     
     this.displayAccountButtons = true;
   }
+
+ 
 
   logout() {
     this.isLoggedIn = false;

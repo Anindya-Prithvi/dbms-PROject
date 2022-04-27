@@ -60,7 +60,6 @@
 
 
 <div class="manager" *ngIf="managerisLoggedIn">
-    Only thing that works so far lol
     <button mat-raised-button (click)="goHome()" color="primary">
         Home
     </button>
@@ -89,11 +88,19 @@
         Current Account Transactions
     </button>
 
+    <br>
+
+    <p></p>
+
+    <button mat-raised-button *ngIf="displayAccountButtons" (click)="loadGraph()" color="primary">
+        Aggregated Transactions Graph
+    </button>
+
 
     <app-saving-transactions-view *ngIf="displaySavings"></app-saving-transactions-view>
     <app-current-transactions-view *ngIf="displayCurrent"></app-current-transactions-view>
     <app-credit-transactions-view *ngIf="displayCredit"></app-credit-transactions-view>
     <app-loan-transactions-view *ngIf="displayLoan"></app-loan-transactions-view> 
-
+    <app-transactions-graph *ngIf="displayGraph" [datapoints]="datapoints"></app-transactions-graph>
 
 </div>

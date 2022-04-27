@@ -33,7 +33,7 @@ export class SavingTransactionsViewComponent implements OnInit {
   // cardNo: string;
   // creditDebit: string;
 
-  displayedColumns: string[] = ['transId', 'customerId', 'amount', 'time', 'toAccount', 'fromAccount', 'type', 'cardNo', 'creditDebit'];
+  displayedColumns: string[] = ['transId', 'customerId', 'amount', 'time', 'toAccount', 'fromAccount', 'creditDebit'];
 
   constructor() {
     this.datapoints = [[1]];
@@ -47,9 +47,9 @@ export class SavingTransactionsViewComponent implements OnInit {
 
   getData(): string[][] {
     let transactionsDump!: string[][];
-    axios.get("/api/v1/savingsTransaction").then(response => {
+    axios.get("/api/v1/allSavingsAccountTransactionsForManager").then(response => {
       console.log(response.headers);
-      console.log("OYE TRANSACTIONS: " + response.data);
+      // console.log("OYE TRANSACTIONS: " + response.data);
       // transactionsDump.push(response.data as string[][]);
       // console.log(response.data);
 
@@ -65,7 +65,7 @@ export class SavingTransactionsViewComponent implements OnInit {
       transactionsDump = response.data;
       // console.log(transactionsDump);
       for (const element of transactionsDump) {
-        console.log(element);
+        // console.log(element);
         TRANSACTION_DATA.push({
           transId: element[0],
           customerId: element[1],
