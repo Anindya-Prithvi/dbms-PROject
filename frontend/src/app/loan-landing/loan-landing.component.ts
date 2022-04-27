@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { loadavg } from 'os';
 import { axios } from '../../utilities/axios';
 
 @Component({
@@ -18,6 +19,18 @@ export class LoanLandingComponent implements OnInit {
   
   constructor() {
     this.getBalance();
+    let loanDeats: String[];
+    axios.get("/api/v1/displayLoanAccountDetails").then(response => {
+      console.log("OYE BALANCE: " + response.data);
+      console.log(response.data);
+      loanDeats = response.data;
+
+      this.principal = loanDeats[0];
+      this.amountDue = loanDeats[1];
+      this.interestRate = loanDeats[2];
+      this.billingCycle = loanDeats[3];
+      this.dueDate = loanDeats[4];      
+    });
   }
 
   ngOnInit(): void {

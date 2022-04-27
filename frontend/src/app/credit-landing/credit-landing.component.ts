@@ -16,6 +16,9 @@ export class CreditLandingComponent implements OnInit {
   
   constructor() {
     this.getBalance();
+    this.getCreditLimit();
+    this.getCreditSpent();
+    this.getCreditAmountDue();
   }
 
   ngOnInit(): void {
@@ -29,6 +32,38 @@ export class CreditLandingComponent implements OnInit {
     });
 
   }
+
+  getCreditSpent(): void {
+    axios.get("/api/v1/getCreditSpent").then(response => {
+      console.log("OYE Credit Spent: " + response.data);
+      console.log(response.data);
+      this.creditSpent = response.data;
+    }); 
+  }
+
+  getCreditLimit(): void {
+    axios.get("/api/v1/getCreditLimit").then(response => {
+      console.log("OYE Credit Limit: " + response.data);
+      console.log(response.data);
+      this.creditLimit = response.data;
+    }); 
+  }
+
+  getCreditAmountDue(): void {
+    axios.get("/api/v1/getCreditAmountDue").then(response => {
+      console.log("OYE Credit Amount: " + response.data);
+      console.log(response.data);
+      this.amountDue = response.data;
+    }); 
+  }
+
+  // getCreditLimit(): void {
+  //   axios.get("/api/v1/getCreditLimit").then(response => {
+  //     console.log("OYE Credit Limit: " + response.data);
+  //     console.log(response.data);
+  //     this.creditLimit = response.data;
+  //   }); 
+  // }
 
   sendMoney() {
     console.log("Paisa Bhej");
