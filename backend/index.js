@@ -1424,4 +1424,18 @@ AND customers.pancard = creditcardaccount.customerId;`,
   }
 });
 
+app.get("/api/v1/gettxnsweekwise", (req, res) => {
+  con_user_2.query(`
+  SELECT SUM(amount), DATE_FORMAT(timeOfTransaction, "%y;5m:$U") as WOT from transaction
+  group by WOT order by WOT`, (err, result) => {
+    if (err) {
+      res.send(err.message);
+      throw err;
+    }
+    else {
+      res.send(result);
+    }
+  })
+})
+
 app.listen(process.env.PORT || port);

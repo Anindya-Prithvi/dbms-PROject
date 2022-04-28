@@ -7,7 +7,7 @@ create view allsavingsaccounttransactions as
 select txnId,timeOfTransaction, toAccount, amount, savingsaccount.accountNo, savingsaccount.customerId, 'DEBIT' as creditOrDebit
 from transaction, savingsaccount
 where transaction.fromAccserialNo = savingsaccount.serialNo AND transaction.fromAcccustomerId = savingsaccount.customerId UNION 
-select txnId,timeOfTransaction, toAccount, amount, savingsaccount.accountNo, savingsaccount.customerId, 'CREDIT' creditOrDebit
+select txnId,timeOfTransaction, toAccount, amount, savingsaccount.accountNo, savingsaccount.customerId, 'CREDIT' as creditOrDebit
 from transaction, savingsaccount
 WHERE transaction.toAccount = savingsaccount.accountNo;
 

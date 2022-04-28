@@ -1,6 +1,57 @@
-<p>signup works!</p>
-This is manager's endpoint
-i.e. we will need the password
-of the manager to create account
+<p></p>
+<form [formGroup]="registrationcreds" (ngSubmit)="onSubmit()" style="display:flex; flex-direction: column;">
+    Employee
+    <mat-form-field appearance="fill">
+        <mat-label>ID</mat-label>
+        <input matInput formControlName="empID">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="employee_password">
+    </mat-form-field>
+    Customer
+    <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="customerName">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>PAN</mat-label>
+        <input matInput formControlName="pan">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Address: FlatNO.</mat-label>
+        <input matInput formControlName="address_flatno">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Address: Locality</mat-label>
+        <input matInput formControlName="address_locality">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Address: State</mat-label>
+        <input matInput formControlName="address_state">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Address: Country</mat-label>
+        <input matInput formControlName="address_country">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Phone Country Code</mat-label>
+        <input matInput formControlName="phone_countryCode">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phone_number">
+    </mat-form-field>
+    Credentials for logging in
+    <mat-form-field appearance="fill">
+        <mat-label>Create username</mat-label>
+        <input matInput formControlName="username">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Create password</mat-label>
+        <input matInput type="password" formControlName="user_password">
+    </mat-form-field>
 
-<mat-spinner color="accent"></mat-spinner>
+    <button (submit)="onSubmit()" [disabled]="registrationcreds.invalid" mat-raised-button
+        color="primary">Register</button>
+</form>

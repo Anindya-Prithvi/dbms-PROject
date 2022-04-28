@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
 
       // localStorage.setItem('accesscookie', response.data);
       // if (response.data === "correct") { sessionStorage.setItem('login', 'true') };
-      window.location.reload(); //comment out at debugging
+      // window.location.reload(); //comment out at debugging
     })
   }
 
