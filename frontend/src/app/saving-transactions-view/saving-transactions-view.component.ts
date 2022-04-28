@@ -12,7 +12,6 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class SavingTransactionsViewComponent implements OnInit {
 
-  datapoints: number[][];
 
   ngOnInit(): void {
     // this.convertData();
@@ -36,7 +35,7 @@ export class SavingTransactionsViewComponent implements OnInit {
   displayedColumns: string[] = ['transId', 'customerId', 'amount', 'time', 'toAccount', 'fromAccount', 'creditDebit'];
 
   constructor() {
-    this.datapoints = [[1]];
+    // this.datapoints = [[1]];
   }
 
   dataSource = new MatTableDataSource<Transaction>(TRANSACTION_DATA);

@@ -150,7 +150,7 @@ export class AppComponent {
     this.displayCurrent = false;
     this.displayCredit = false;
     this.displayLoan = false;
-
+    this.displayGraph = false;
     this.displayAccountButtons = true;
   }
 

@@ -71,7 +71,7 @@ export class CreditTransactionsViewComponent implements OnInit {
           time: element[3],
           toAccount: element[4],
           fromAccount: element[5],
-          creditDebit: element[8]
+          creditDebit: element[6]
         });
         // TRANSACTION_DATA =  TRANSACTION_DATA.slice(1, );
         this.dataSource.data = TRANSACTION_DATA;
