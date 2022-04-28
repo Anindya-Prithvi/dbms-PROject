@@ -1,25 +1,25 @@
-.auth{
+.auth {
     margin: auto;
     width: fit-content;
     padding: 1rem;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     text-align: center;
 }
 
-.user{
+.user {
     margin: auto;
     width: 100%;
     padding: 1rem;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     text-align: center;
 }
 
 
-.manager{
+.manager {
     margin: auto;
     width: 100%;
     padding: 1rem;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     text-align: center;
 }
 

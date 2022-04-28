@@ -70,7 +70,7 @@ export class AppComponent {
       this.managerisLoggedIn = (String(response.data) === 'true');
       if (this.managerisLoggedIn === true) {
         axios.get('/api/v1/gettxnsweekwise').then(response => {
-          console.log(response.data[0]);
+          this.datapoints = response.data;
         })
 
       }
