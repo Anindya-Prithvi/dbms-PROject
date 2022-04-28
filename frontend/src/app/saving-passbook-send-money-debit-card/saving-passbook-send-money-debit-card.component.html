@@ -1,8 +1,8 @@
-<p>saving-passbook-send-money-debit-card works!</p>
+<!-- <p>saving-passbook-send-money-debit-card works!</p> -->
 
 
-<mat-card class="debitCard"> 
-	<mat-card-title> 
+<mat-card class="debitCard">
+	<mat-card-title>
 		<p>Card No: {{cardNo}}</p>
 	</mat-card-title>
 	<mat-card-title>
@@ -17,8 +17,8 @@
 			<input matInput type="password" formControlName="cvv">
 		</mat-form-field>
 		<mat-form-field appearance="fill">
-		    <mat-label>To Account No.</mat-label>
-		    <input matInput formControlName="toAccount">
+			<mat-label>To Account No.</mat-label>
+			<input matInput formControlName="toAccount">
 		</mat-form-field>
 		<mat-form-field appearance="fill">
 			<mat-label>To Account Type</mat-label>
@@ -28,9 +28,10 @@
 			<mat-label>Amount</mat-label>
 			<input matInput type="number" formControlName="amount">
 		</mat-form-field>
-		
+
 		<mat-card-actions>
-			<button (submit)="onSubmit()" [disabled]="transactionCreds.invalid" mat-raised-button color="primary">Pay</button>
+			<button (submit)="onSubmit()" [disabled]="transactionCreds.invalid" mat-raised-button
+				color="primary">Pay</button>
 		</mat-card-actions>
 	</form>
 </mat-card>

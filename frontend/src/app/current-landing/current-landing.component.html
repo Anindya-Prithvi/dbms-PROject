@@ -1,8 +1,8 @@
-<p>current-landing works!</p>
+<!-- <p>current-landing works!</p> -->
 
 <p>Balance: {{balance}}</p>
 <button mat-raised-button (click)="showTransactions()">Passbook</button>
 <button mat-raised-button (click)="sendMoney()">Send Money</button>
-<p>Passbook:</p>
+<!-- <p>Passbook:</p> -->
 <app-current-passbook *ngIf="showPassbook"></app-current-passbook>
 <app-current-send-money *ngIf="showSendMoney"></app-current-send-money>

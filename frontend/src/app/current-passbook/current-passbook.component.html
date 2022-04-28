@@ -1,58 +1,54 @@
-<p>current-passbook works!</p>
+<!-- <p>current-passbook works!</p> -->
 
 <div class="mat-elevation-z8">
 	<table mat-table [dataSource]="dataSource">
-      
-	  <!-- TransactionId Column -->
-	  <ng-container matColumnDef="transId">
-	    <th mat-header-cell *matHeaderCellDef> No. </th>
-	    <td mat-cell *matCellDef="let element"> {{element.transId}} </td>
-	  </ng-container>
-      
-	  <!-- Amount Column -->
-	  <ng-container matColumnDef="amount">
-	    <th mat-header-cell *matHeaderCellDef> Amount </th>
-	    <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
-	  </ng-container>
-      
-	  <!-- Time Column -->
-	  <ng-container matColumnDef="time">
-	    <th mat-header-cell *matHeaderCellDef> Time </th>
-	    <td mat-cell *matCellDef="let element"> {{element.time}} </td>
-	  </ng-container>
-      
-	  <!-- toAccount Column -->
-	  <ng-container matColumnDef="toAccount">
-	    <th mat-header-cell *matHeaderCellDef> To Account </th>
-	    <td mat-cell *matCellDef="let element"> {{element.toAccount}} </td>
-	  </ng-container>
-      
-	   <!-- fromAccount Column -->
-	   <ng-container matColumnDef="fromAccountId">
-	      <th mat-header-cell *matHeaderCellDef> From Account </th>
-	      <td mat-cell *matCellDef="let element"> {{element.fromAccountId}} </td>
-	    </ng-container>
-      
-	      <!-- type Column -->
-	  <ng-container matColumnDef="type">
-	      <th mat-header-cell *matHeaderCellDef> Type </th>
-	      <td mat-cell *matCellDef="let element"> {{element.type}} </td>
-	    </ng-container>
-      
-	    <!-- cardNo Column -->
-	  <ng-container matColumnDef="cardNo">
-	      <th mat-header-cell *matHeaderCellDef> Card No. </th>
-	      <td mat-cell *matCellDef="let element"> {{element.cardNo}} </td>
-	    </ng-container>
-      
-	  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-	  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+		<!-- TransactionId Column -->
+		<ng-container matColumnDef="transId">
+			<th mat-header-cell *matHeaderCellDef> No. </th>
+			<td mat-cell *matCellDef="let element"> {{element.transId}} </td>
+		</ng-container>
+
+		<!-- Amount Column -->
+		<ng-container matColumnDef="amount">
+			<th mat-header-cell *matHeaderCellDef> Amount </th>
+			<td mat-cell *matCellDef="let element"> {{element.amount}} </td>
+		</ng-container>
+
+		<!-- Time Column -->
+		<ng-container matColumnDef="time">
+			<th mat-header-cell *matHeaderCellDef> Time </th>
+			<td mat-cell *matCellDef="let element"> {{element.time}} </td>
+		</ng-container>
+
+		<!-- toAccount Column -->
+		<ng-container matColumnDef="toAccount">
+			<th mat-header-cell *matHeaderCellDef> To Account </th>
+			<td mat-cell *matCellDef="let element"> {{element.toAccount}} </td>
+		</ng-container>
+
+		<!-- fromAccount Column -->
+		<ng-container matColumnDef="fromAccountId">
+			<th mat-header-cell *matHeaderCellDef> From Account </th>
+			<td mat-cell *matCellDef="let element"> {{element.fromAccountId}} </td>
+		</ng-container>
+
+		<!-- type Column -->
+		<ng-container matColumnDef="type">
+			<th mat-header-cell *matHeaderCellDef> Type </th>
+			<td mat-cell *matCellDef="let element"> {{element.type}} </td>
+		</ng-container>
+
+		<!-- cardNo Column -->
+		<ng-container matColumnDef="cardNo">
+			<th mat-header-cell *matHeaderCellDef> Card No. </th>
+			<td mat-cell *matCellDef="let element"> {{element.cardNo}} </td>
+		</ng-container>
+
+		<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+		<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 	</table>
-      
-	<mat-paginator [pageSizeOptions]="[5, 10, 20]"
-		       showFirstLastButtons 
-		       aria-label="Select page of periodic elements">
+
+	<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of txns">
 	</mat-paginator>
-      </div>
-      
-      
+</div>

@@ -1,7 +1,7 @@
-<p>saving-landing works!</p>
+<!-- <p>saving-landing works!</p> -->
 <p>Balance: {{balance}}</p>
 <button mat-raised-button (click)="showTransactions()">Passbook</button>
 <button mat-raised-button (click)="sendMoney()">Send Money</button>
-<p>Passbook:</p>
+<!-- <p>Passbook:</p> -->
 <app-saving-passbook *ngIf="showPassbook"></app-saving-passbook>
 <app-saving-passbook-send-money *ngIf="showSendMoney"></app-saving-passbook-send-money>
