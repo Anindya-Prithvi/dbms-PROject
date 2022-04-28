@@ -27,4 +27,5 @@ any fancy bloat applications. The database is in mysql.
   For developing the backend use `npm i -g nodemon` and once it is done, fire up a shell and run `npm serve`. This should get the backend live and have some form of crash protection. If you don't want it, just use `npm start`.
 - Run the frontend (dev mode)
   Fire up a shell and run `ng serve`. Enjoy the webpage! And make pull requests.
+- Please note, you might (most probably) encounter Set-Cookie errors if your browser is super strict or you are using incognito. 
 
