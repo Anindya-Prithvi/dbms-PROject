@@ -8,7 +8,7 @@ import { axios } from 'src/utilities/axios';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  datapoints: number[][] = [];
+  datapoints: number[][] = [[]];
 
   title = 'material-girl';
   isLoggedIn: boolean = false;
@@ -25,6 +25,8 @@ export class AppComponent {
   displayCredit: boolean = false;
   displayLoan: boolean = false;
   displayGraph: boolean = false;
+
+  graphingdatacalled: boolean = false;
 
   // See something for cookie disabled people
   constructor() {
@@ -66,6 +68,12 @@ export class AppComponent {
     }, 60000); //check every minute if user is logged in
     axios.get('/api/v1/managerlogin').then(response => {
       this.managerisLoggedIn = (String(response.data) === 'true');
+      if (this.managerisLoggedIn === true) {
+        axios.get('/api/v1/gettxnsweekwise').then(response => {
+          console.log(response.data[0]);
+        })
+
+      }
     });
     const checklogin2 = window.setInterval(() => {
       axios.get('/api/v1/managerlogin').then(response => {

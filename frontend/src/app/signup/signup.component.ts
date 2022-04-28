@@ -53,7 +53,14 @@ export class SignupComponent implements OnInit {
 
       // localStorage.setItem('accesscookie', response.data);
       // if (response.data === "correct") { sessionStorage.setItem('login', 'true') };
-      // window.location.reload(); //comment out at debugging
+      if (response.data === "Success") {
+        window.alert("Congrats! You are registered");
+        window.location.reload(); //comment out at debugging        
+      }
+      else {
+        window.alert(`Error occured: ${response.data}`);
+      }
+
     })
   }
 
